@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hackathon.public_.tables.Users.USERS;
-import static com.example.hackathon.public_.tables.UserAuthorities.USER_AUTHORITIES;
+import static com.example.hackathon.public_.tables.UserAuthority.USER_AUTHORITY;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,14 +46,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserEntity> findById(UUID userId) {
         return create.selectFrom(USERS)
-                .where(USERS.ID.eq(userId))
+                .where(USERS.USER_ID.eq(userId))
                 .fetchOptional(USER_ENTITY_MAPPER);
     }
 
     @Override
     public List<UserAuthoritiesEntity> findAuthoritiesByUserId(UUID userId) {
-        return create.selectFrom(USER_AUTHORITIES)
-                .where(USER_AUTHORITIES.USER_ID.eq(userId))
+        return create.selectFrom(USER_AUTHORITY)
+                .where(USER_AUTHORITY.USER_ID.eq(userId))
                 .fetch(USER_AUTHORITIES_ENTITY_MAPPER);
     }
 
@@ -66,13 +66,13 @@ public class UserRepositoryImpl implements UserRepository {
                 .set(USERS.PASSWORD, entity.password())
                 .set(USERS.FULL_NAME, entity.fullName())
                 .set(USERS.ONLINE_STATUS, entity.onlineStatus())
-                .returning(USERS.ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS)
+                .returning(USERS.USER_ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS)
                 .fetchOne(USER_ENTITY_MAPPER);
 
         List<InsertValuesStepN<?>> insert = new ArrayList<>();
-        authorities.forEach(a -> insert.add((InsertValuesStepN<?>) create.insertInto(USER_AUTHORITIES)
-                .set(USER_AUTHORITIES.USER_ID, user.id())
-                .set(USER_AUTHORITIES.AUTHORITIES, a.name())));
+        authorities.forEach(a -> insert.add((InsertValuesStepN<?>) create.insertInto(USER_AUTHORITY)
+                .set(USER_AUTHORITY.USER_ID, user.id())
+                .set(USER_AUTHORITY.AUTHORITIES, a.name())));
 
         create.batch(insert).execute();
 
@@ -87,8 +87,8 @@ public class UserRepositoryImpl implements UserRepository {
                 .set(USERS.PASSWORD, entity.password())
                 .set(USERS.FULL_NAME, entity.fullName())
                 .set(USERS.ONLINE_STATUS, entity.onlineStatus())
-                .where(USERS.ID.eq(entity.id()))
-                .returning(USERS.ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS)
+                .where(USERS.USER_ID.eq(entity.id()))
+                .returning(USERS.USER_ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS)
                 .fetchOne(USER_ENTITY_MAPPER);
     }
 

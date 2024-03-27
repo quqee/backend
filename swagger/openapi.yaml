@@ -235,6 +235,18 @@ paths:
                 $ref: '#/components/schemas/PaginatedMessageDtoResult'
         '403':
           description: Ошибка при авторизации
+
+  /defects:
+    post:
+      tags:
+        - defect
+      summary: Отправить заявку в дефектом
+      operationId: createApplication()
+      security:
+        - auth-bearer: []
+      requestBody:
+      responses:
+
   /app/chat:
     post:
       tags:
