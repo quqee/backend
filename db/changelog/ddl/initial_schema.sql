@@ -203,14 +203,51 @@ VALUES ('Стирание краски', TRUE),
 -- changeset gordey_dovydenko:13
 
 INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Дорожное агентство"', 'г. Москва, ул. Ленина, д. 1', '+7(495)123-45-67', 'road@road.ru', 'PERFORMER');
+VALUES ('ООО "Дорожное агентство"', 'г. Пермь, ул. Ленина, д. 1', '+7 (495) 123-45-67', 'agency1@agency.ru', 'PERFORMER');
 
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road@road.ru'), 'admin', 'admin@gmail.ru',
-        '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'Admin', TRUE);
+VALUES ((SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'), 'agency1', 'bussiness1@gmail.com',
+        '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'agency1', FALSE);
 
 INSERT INTO user_authority (user_id, authorities)
-VALUES ((SELECT user_id FROM users WHERE username = 'admin'), 'ROLE_ADMIN');
+VALUES ((SELECT user_id FROM users WHERE email = 'bussiness1@gmail.com'), 'ROLE_ADMIN');
+
+
+
+INSERT INTO organization (name, address, phone_number, email, organization_type)
+VALUES ('ООО "Лучшее качество"', 'г. Пермь, ул. Ленина, д. 3', '+7 (495) 123-45-66', 'agency2@agency.ru', 'PERFORMER');
+
+INSERT INTO users (organization_id, username, email, password, full_name, online_status)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'agency2@agency.ru'), 'agency2', 'bussiness2@gmail.com',
+        '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'agency2', FALSE);
+
+INSERT INTO user_authority (user_id, authorities)
+VALUES ((SELECT user_id FROM users WHERE email = 'bussiness2@gmail.com'), 'ROLE_ADMIN');
+
+
+
+INSERT INTO organization (name, address, phone_number, email, organization_type)
+VALUES ('Министерство транспорта', 'г. Пермь, ул. Ленина, д. 2', '+7 (495) 123-45-68', 'road1@perm.ru', 'CUSTOMER');
+
+INSERT INTO users (organization_id, username, email, password, full_name, online_status)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'petr_ivanov', 'perm1@yandex.ru',
+        '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'Petr Ivanov', FALSE);
+
+INSERT INTO user_authority (user_id, authorities)
+VALUES ((SELECT user_id FROM users WHERE email = 'perm1@yandex.ru'), 'ROLE_ADMIN');
+
+
+
+INSERT INTO organization (name, address, phone_number, email, organization_type)
+VALUES ('ООО "Министерство улучшения инфраструктуры"', 'г. Пермь, ул. Ленина, д. 4', '+7 (495) 123-45-60', 'road2@perm.ru', 'CUSTOMER');
+
+INSERT INTO users (organization_id, username, email, password, full_name, online_status)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru'), 'andrey_fedorov', 'perm2@yandex.ru',
+        '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'Andrey Fedorov', FALSE);
+
+INSERT INTO user_authority (user_id, authorities)
+VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN');
+
 
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM user WHERE username = 'admin';
