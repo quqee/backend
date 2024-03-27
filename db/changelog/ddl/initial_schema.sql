@@ -51,17 +51,23 @@ CREATE TABLE user_authority
 
 CREATE TABLE statement
 (
-    statement_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    create_time  TIMESTAMP WITH TIME ZONE NOT NULL,
-    area_name    VARCHAR(255)             NOT NULL,
-    length       DOUBLE PRECISION         NOT NULL,
-    road_type    VARCHAR(255)             NOT NULL CHECK ( road_type IN ('АВТОМАГИСТРАЛЬ', 'СКОРОСТНАЯ_ДОРОГА', 'ОБЫЧНАЯ_ДОРОГА') ),
-    surface_type VARCHAR(255)             NOT NULL CHECK ( surface_type IN
-                                                           ('АСФАЛЬТ', 'БРУСЧАТКА', 'ЩЕБЕНЬ', 'ГРУНТ', 'ПЕСОК',
-                                                            'БРУСЧАТКА', 'БЕТОН', 'ЖЕЛЕЗОБЕТОН', 'КОМБИНИРОВАННОЕ',
-                                                            'ДРУГОЕ') ),
-    direction    VARCHAR(255),
-    deadline     TIMESTAMP WITH TIME ZONE NOT NULL
+    statement_id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_creator_id   UUID                     NOT NULL,
+    organization_performer_id UUID                     NOT NULL,
+    create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
+    area_name                 VARCHAR(255)             NOT NULL,
+    length                    DOUBLE PRECISION         NOT NULL,
+    road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('АВТОМАГИСТРАЛЬ', 'СКОРОСТНАЯ_ДОРОГА', 'ОБЫЧНАЯ_ДОРОГА') ),
+    surface_type              VARCHAR(255)             NOT NULL CHECK ( surface_type IN
+                                                                        ('АСФАЛЬТ', 'БРУСЧАТКА', 'ЩЕБЕНЬ', 'ГРУНТ',
+                                                                         'ПЕСОК',
+                                                                         'БРУСЧАТКА', 'БЕТОН', 'ЖЕЛЕЗОБЕТОН',
+                                                                         'КОМБИНИРОВАННОЕ',
+                                                                         'ДРУГОЕ') ),
+    direction                 VARCHAR(255),
+    deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    FOREIGN KEY (organization_creator_id) REFERENCES organization (organization_id),
+    FOREIGN KEY (organization_performer_id) REFERENCES organization (organization_id)
 );
 
 
@@ -203,7 +209,8 @@ VALUES ('Стирание краски', TRUE),
 -- changeset gordey_dovydenko:13
 
 INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Дорожное агентство"', 'г. Пермь, ул. Ленина, д. 1', '+7 (495) 123-45-67', 'agency1@agency.ru', 'PERFORMER');
+VALUES ('ООО "Дорожное агентство"', 'г. Пермь, ул. Ленина, д. 1', '+7 (495) 123-45-67', 'agency1@agency.ru',
+        'PERFORMER');
 
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
 VALUES ((SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'), 'agency1', 'bussiness1@gmail.com',
@@ -239,7 +246,8 @@ VALUES ((SELECT user_id FROM users WHERE email = 'perm1@yandex.ru'), 'ROLE_ADMIN
 
 
 INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Министерство улучшения инфраструктуры"', 'г. Пермь, ул. Ленина, д. 4', '+7 (495) 123-45-60', 'road2@perm.ru', 'CUSTOMER');
+VALUES ('ООО "Министерство улучшения инфраструктуры"', 'г. Пермь, ул. Ленина, д. 4', '+7 (495) 123-45-60',
+        'road2@perm.ru', 'CUSTOMER');
 
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
 VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru'), 'andrey_fedorov', 'perm2@yandex.ru',
