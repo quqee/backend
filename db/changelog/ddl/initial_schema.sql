@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS message
 
 CREATE TABLE IF NOT EXISTS defect_status
 (
-    id   SERIAL,
+    id   SERIAL PRIMARY KEY,
     name TEXT,
     has_distance BOOLEAN DEFAULT FALSE
 );
@@ -85,7 +85,8 @@ CREATE TABLE IF NOT EXISTS application
     created_time     TIMESTAMP WITH TIME ZONE NOT NULL,
     deadline_time    TIMESTAMP WITH TIME ZONE NOT NULL,
     defect_distance  DOUBLE PRECISION,
-    FOREIGN KEY (creator_id, executor_id) REFERENCES Users (id),
+    FOREIGN KEY (creator_id) REFERENCES Users (id),
+    FOREIGN KEY (executor_id) REFERENCES Users (id),
     FOREIGN KEY (defect_status_id) REFERENCES defect_status (id)
 );
 
@@ -128,8 +129,8 @@ INSERT INTO defect_status (name, has_distance) VALUES
     ('Стирание краски', TRUE),
     ('Сминание', TRUE),
     ('Изгибание', TRUE),
-    ('Нарушение целостности дорожного знака'),
-    ('Вандализм'),
+    ('Нарушение целостности дорожного знака', FALSE),
+    ('Вандализм', FALSE),
     ('Перекрытие растительностью', TRUE),
     ('Снежный налет', TRUE),
     ('Ремонт', TRUE),
@@ -138,7 +139,7 @@ INSERT INTO defect_status (name, has_distance) VALUES
     ('Яма', TRUE),
     ('Трещина поперечная', TRUE),
     ('Стирание разметки', TRUE),
-    ('Люк'),
+    ('Люк', FALSE),
     ('Размытие пешеходного перехода', TRUE),
     ('Разрушение бордюрного камня', TRUE),
     ('Железная балка', TRUE),
