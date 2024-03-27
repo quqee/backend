@@ -53,7 +53,7 @@ CREATE TABLE statement
 (
     statement_id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     organization_creator_id   UUID                     NOT NULL,
-    organization_performer_id UUID                     NOT NULL,
+    organization_performer_id UUID,
     create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
     area_name                 VARCHAR(255)             NOT NULL,
     length                    DOUBLE PRECISION         NOT NULL,
@@ -66,6 +66,7 @@ CREATE TABLE statement
                                                                          'ДРУГОЕ') ),
     direction                 VARCHAR(255),
     deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    description               VARCHAR(255),
     FOREIGN KEY (organization_creator_id) REFERENCES organization (organization_id),
     FOREIGN KEY (organization_performer_id) REFERENCES organization (organization_id)
 );
@@ -139,7 +140,6 @@ CREATE TABLE IF NOT EXISTS application
     application_status VARCHAR(50) CHECK ( application_status IN
                                            ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
     defect_status_id   SERIAL                   NOT NULL,
-    description        VARCHAR(255),
     address            VARCHAR(255),
     created_time       TIMESTAMP WITH TIME ZONE NOT NULL,
     defect_distance    DOUBLE PRECISION,
