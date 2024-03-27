@@ -1,0 +1,54 @@
+version: '3.8'
+
+include:
+  - db-common.yml
+
+services:
+  application:
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${HACKATHON_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_HOST=redis
+    build:
+      dockerfile: Dockerfile
+      network: host
+      context: .
+      args:
+        - DB_URL=jdbc:postgresql://localhost:5432/${HACKATHON_DB}
+        - DB_USERNAME=${POSTGRES_USER}
+        - DB_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    networks:
+      - app
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui-container"
+    environment:
+      - SWAGGER_JSON=/swagger/openapi.yaml
+      - PORT=8082
+      - SWAGGER_JSON_URL=./openapi.yaml
+      - BASE_URL=/swagger
+      - URLS=[{url:'./openapi.yaml',name:'Hackathon'}]
+    ports:
+      - '8082:8082'
+    volumes:
+      - ./swagger:/swagger
+
+networks:
+  app:
+    name: app_network
+    external: true

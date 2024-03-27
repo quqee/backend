@@ -1,0 +1,465 @@
+openapi: 3.0.3
+info:
+  title: Hackathon - OpenAPI 3.0
+  description: |-
+    Some useful links:
+    - [Git](https://github.com/StaZisS/test-task)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: inostaziss@gmail.com
+  version: 1.0.0
+servers:
+  - url: https://api.quqee.tech/api/v1 # (если здесь изменить, исправить /ws://localhost:8080 в websocket)
+tags:
+  - name: user
+    description: Операции с пользователем
+paths:
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Регистрация пользователя
+      description: Выполняя этот запрос вы получите access и refresh токены
+      operationId: registration
+      requestBody:
+        description: Created user object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '400':
+          description: Ошибка при валидации даннных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: Пользователь уже существует (email или username не уникальный)
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: User already exists
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Вход пользователя
+      description: Выполняя этот запрос вы получите access и refresh токены
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Неверный логин/пароль
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Invalid email or password
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: Обновить токены
+      description: Выполняя этот запрос вы получите access и refresh токены
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Невалидный refresh токен
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Token expired
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: Заблокировать токен
+      description: ''
+      operationId: logoutUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Успешно
+        '401':
+          description: Невалидный токен
+  /users/my/profile:
+    get:
+      tags:
+        - user
+      summary: Получить свой профиль
+      description: ''
+      operationId: getMyProfile
+      security:
+        - auth-bearer: [ ]
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Невалидный access токен
+    put:
+      tags:
+        - user
+      summary: Обновить свой профиль
+      description: ''
+      operationId: updateMyProfile
+      security:
+        - auth-bearer: [ ]
+      requestBody:
+        description: Updated user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfileRequest'
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Нет токена
+
+  /users/available:
+    get:
+      tags:
+        - user
+      summary: Получить пользователей
+      description: ''
+      operationId: getUsers
+      security:
+        - auth-bearer: [ ]
+      parameters:
+        - name: online
+          in: query
+          description: Статус онлайн пользователя (true - онлайн, false - оффлайн, null - все)
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+        '403':
+          description: Ошибка при авторизации
+
+  /messages/{senderId}:
+    get:
+      tags:
+        - message
+      summary: Найти сообщения чата
+      description: Получить сообщения чата для указанного отправителя с возможностью пагинации.
+      operationId: findChatMessages
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: senderId
+          in: path
+          description: ID отправителя, сообщения которого нужно получить.
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы для пагинации. По умолчанию 0.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Количество сообщений на странице. По умолчанию 10.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Список сообщений чата с метаданными пагинации.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMessageDtoResult'
+        '403':
+          description: Ошибка при авторизации
+  /app/chat:
+    post:
+      tags:
+        - websocket
+      summary: Отправить сообщение пользователю
+      description: 'URL - ws://api.quqee.tech:8080/ws/app/chat'
+      operationId: sendMessage
+      security:
+        - auth-bearer: [ ]
+      requestBody:
+        description: Это Payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestMessageDto'
+      responses:
+        '200':
+          description: |
+            Чтобы получить сообщения в статусе получателя, вам нужно подписаться на топик по адресу ws://api.quqee.tech:8080/ws/topic/UUID_RECIPIENT_ID/messages
+            Не обращайте внимание на 200 статус код https://kapeli.com/cheat_sheets/WebSocket_Status_Codes.docset/Contents/Resources/Documents/index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseNotificationDto'
+  /app/user.connectUser:
+    post:
+      tags:
+        - websocket
+      summary: Установить онлайн статус
+      description: 'URL - ws://api.quqee.tech:8080/ws/app/user.connectUser'
+      operationId: setOnlineTrue
+      security:
+        - auth-bearer: [ ]
+      responses:
+        '200' :
+          description: |
+            Чтобы получить обновления о статусе пользователей, вам нужно подписаться на топик по адресу ws://api.quqee.tech:8080/ws/user/public
+            Не обращайте внимание на 200 статус код https://kapeli.com/cheat_sheets/WebSocket_Status_Codes.docset/Contents/Resources/Documents/index
+  /app/user.disconnectUser:
+    post:
+      tags:
+        - websocket
+      summary: Установить офлайн статус
+      description: 'URL - ws://api.quqee.tech:8080/ws/app/user.disconnectUser'
+      operationId: setOnlineFalse
+      security:
+        - auth-bearer: [ ]
+      responses:
+        '200' :
+          description: |
+            Чтобы получить обновления о статусе пользователей, вам нужно подписаться на топик по адресу ws://api.quqee.tech:8080/ws/user/public
+            Не обращайте внимание на 200 статус код https://kapeli.com/cheat_sheets/WebSocket_Status_Codes.docset/Contents/Resources/Documents/index 
+
+components:
+  schemas:
+    CreateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: John007
+          minLength: 3
+          maxLength: 50
+          nullable: false
+        full_name:
+          type: string
+          example: John
+          nullable: false
+        email:
+          type: string
+          example: john@email.com
+          nullable: false
+        password:
+          type: string
+          example: '12345'
+          minLength: 5
+          maxLength: 50
+          nullable: false
+
+    UpdateUserProfileRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: John
+          nullable: false
+        email:
+          type: string
+          example: john@gmail.com
+          nullable: false
+
+    PaginatedMessageDtoResult:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/MessageDto'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      required:
+        - content
+        - metadata
+
+    Metadata:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int32
+
+    MessageDto:
+      type: object
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        chat_room_id:
+          type: string
+          format: uuid
+        sender_id:
+          type: string
+          format: uuid
+        recipient_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+          example: Hello World!
+        created_at:
+          type: string
+          format: date-time
+          example: 2024-09-15T13:50:30.526+07:00
+        my_message:
+          type: boolean
+          example: true
+
+    JwtResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjZmJlOWFjOS05MTQ0LTRmZWMtOWViMi1mYjU0NzJiNDEzMjIiLCJyb2xlIjpbIkRFRkFVTFQiXSwiZXhwIjoxNzExOTgxMTIzLCJqdGkiOiJmZWFmMDNkMy00NDFkLTRlNmQtYjBkOS1iYWI1YzQ4MzU1ZWQifQ.R_fBQ-HRbT5JT6KahcP4vbsGluNuI-nW2vnY3xAuhv7XME1hi6uW2XgGThHrlcy2
+          nullable: false
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjZmJlOWFjOS05MTQ0LTRmZWMtOWViMi1mYjU0NzJiNDEzMjIiLCJleHAiOjE3OTc0ODExMjMsImp0aSI6IjA3NDAyMzAyLWMzNTctNGI0MS1hY2I0LTBlMTQxMDE1N2ZkOCJ9.lCXc_mj5a090BObdZf1RGT-hnGxSDmL6UkxFZ9mFVKAiYbpCGScAAzB_xfqi9WQE
+          nullable: false
+
+    ErrorMessage:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: 12345
+
+    RefreshRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjZmJlOWFjOS05MTQ0LTRmZWMtOWViMi1mYjU0NzJiNDEzMjIiLCJleHAiOjE3OTc0ODExMjMsImp0aSI6IjA3NDAyMzAyLWMzNTctNGI0MS1hY2I0LTBlMTQxMDE1N2ZkOCJ9.lCXc_mj5a090BObdZf1RGT-hnGxSDmL6UkxFZ9mFVKAiYbpCGScAAzB_xfqi9WQE
+          nullable: false
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          example: john
+        full_name:
+          type: string
+          example: Gurney Halleck
+        email:
+          type: string
+          example: john@email.com
+        online_status:
+          type: boolean
+          example: false
+
+    RequestMessageDto:
+      type: object
+      properties:
+        recipientId:
+          type: string
+          format: uuid
+        content:
+          type: string
+          example: Hello World!
+    ResponseNotificationDto:
+      type: object
+      properties:
+        notificationId:
+          type: string
+          format: uuid
+        senderId:
+          type: string
+          format: uuid
+        receiverId:
+          type: string
+          format: uuid
+        content:
+          type: string
+          example: Hello World!
+
+
+  securitySchemes:
+    auth-bearer:
+      type: http
+      scheme: bearer

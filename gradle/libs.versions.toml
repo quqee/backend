@@ -1,0 +1,45 @@
+[versions]
+spring-boot = "3.2.3"
+
+[plugins]
+spring-plugin = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version = "1.0.6.RELEASE" }
+liquibase-plugin = { id = "org.liquibase.gradle", version = "2.2.0" }
+jooq-plugin = { id = "nu.studer.jooq", version = "8.2" }
+
+[libraries]
+#spring
+spring-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-jooq = { module = "org.springframework.boot:spring-boot-starter-jooq", version.ref = "spring-boot" }
+spring-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
+spring-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis", version.ref = "spring-boot" }
+spring-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
+jackson-data-type = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.17.0" }
+
+#liquibase
+liquibase-core = { module = "org.liquibase:liquibase-core", version = "" }
+picocli = { module = "info.picocli:picocli", version = "4.7.5" }
+
+#docker locally
+devtools = { module = "org.springframework.boot:spring-boot-docker-compose" }
+
+#db drivers
+postgresql-driver = { module = "org.postgresql:postgresql", version = "42.7.2" }
+
+#lombok
+lombok = { module = "org.projectlombok:lombok", version = "1.18.30" }
+
+#test
+spring-test-starter = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+spring-test-security = { module = "org.springframework.security:spring-security-test", version = "6.2.2" }
+
+#db client
+jedis-client = { module = "redis.clients:jedis", version = "5.1.2" }
+
+#jwt
+nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version = "9.37.3" }
+jsonwebtoken-jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version = "0.12.5" }
+jsonwebtoken-jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version = "0.12.5" }
+jsonwebtoken-jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version = "0.12.5" }
