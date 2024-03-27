@@ -159,3 +159,16 @@ VALUES ((SELECT id FROM Users WHERE username = 'admin'), 'ROLE_ADMIN');
 
 -- rollback DELETE FROM User_Authorities WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM Users WHERE username = 'admin';
+
+-- changeset gordey_dovydenko:12
+
+CREATE TABLE voice_scheduler
+(
+    application_id UUID PRIMARY KEY,
+    process_id VARCHAR(60) NOT NULL,
+    schedule_time   TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
+    FOREIGN KEY (application_id) REFERENCES application (application_id)
+);
+
+-- rollback DROP TABLE voice_scheduler;

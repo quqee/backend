@@ -6,11 +6,9 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
 
 @SpringBootApplication
 public class HackathonApplication {
-
     public static void main(String[] args) {
         new SpringApplicationBuilder(HackathonApplication.class)
                 .beanNameGenerator(new FullyQualifiedAnnotationBeanNameGenerator())
                 .run(args);
     }
-
 }

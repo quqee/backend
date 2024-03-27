@@ -2,10 +2,19 @@ spring:
     application:
         name: test-task
 
-logging:
-    level:
-        org.springframework.security: trace
-        redis.clients.jedis.exceptions: trace
+amazonProperties:
+    endpointUrl: https://storage.yandexcloud.net
+    bucketName: hackathon-perm-cup-bucket
+
+yandexApi:
+    uri: https://transcribe.api.cloud.yandex.net
+    token: AQVNx1tbPR0KCm51us0xl5MpmqKEVf62k2lBCfpg
+    speechEndpoint: /speech/stt/v2/longRunningRecognize
+    statusEndpoint: /operations/{id}
+
+scheduler:
+    updateTextFixedRate: 10000
+
 jwt:
     token:
         access:
