@@ -442,6 +442,7 @@ components:
         content:
           type: string
           example: Hello World!
+
     ResponseNotificationDto:
       type: object
       properties:
