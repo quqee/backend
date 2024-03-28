@@ -6,6 +6,7 @@ import org.hits.backend.hackaton.core.file.StorageService;
 import org.hits.backend.hackaton.public_interface.defect.CreateDefectDto;
 import org.hits.backend.hackaton.public_interface.defect.DefectFullDto;
 import org.hits.backend.hackaton.public_interface.defect.DefectStatus;
+import org.hits.backend.hackaton.public_interface.defect.DefectTypeDto;
 import org.hits.backend.hackaton.public_interface.defect.UpdateDefectDto;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -90,6 +92,10 @@ public class DefectService {
                 defect.createdAt(),
                 imagesPhotoLink
         );
+    }
+
+    public List<DefectTypeDto> getDefectTypes() {
+        return defectRepository.getDefectTypes();
     }
 
     private void savePhotos(MultipartFile[] photos, UUID defectId) {

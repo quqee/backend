@@ -21,7 +21,7 @@ public record StatementFullResponse(
         String direction,
         @JsonProperty("deadline")
         OffsetDateTime deadline,
-        @JsonProperty("created_at")
+        @JsonProperty("create_time")
         OffsetDateTime createdAt,
         @JsonProperty("description")
         String description,

@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
 public record DefectSmallResponse(
-        @JsonProperty("defect_id")
+        @JsonProperty("id")
         UUID defectId,
-        @JsonProperty("defect_type")
+        @JsonProperty("type")
         String defectType,
-        @JsonProperty("defect_status")
+        @JsonProperty("status")
         String defectStatus,
         @JsonProperty("description")
         String description

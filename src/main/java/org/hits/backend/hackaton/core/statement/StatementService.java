@@ -97,7 +97,7 @@ public class StatementService {
         var updatedStatement = new StatementEntity(
                 oldEntity.statementId(),
                 oldEntity.organizationCreatorId(),
-                oldEntity.organizationPerformerId(),
+                dto.organizationPerformerId(),
                 oldEntity.creationDate(),
                 dto.areaName(),
                 dto.length(),

@@ -15,7 +15,7 @@ public record StatementSmallResponse(
         @JsonProperty("deadline") OffsetDateTime deadline,
         @JsonProperty("create_time") OffsetDateTime createTime,
         @JsonProperty("description") String description,
-        @JsonProperty("statement_status") String statementStatus,
+        @JsonProperty("status") String statementStatus,
         @JsonProperty("organization_performer_id") UUID organizationPerformerId,
         @JsonProperty("organization_creator_id") UUID organizationCreatorId
 ) {

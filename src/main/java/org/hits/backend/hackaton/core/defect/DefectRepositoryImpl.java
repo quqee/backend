@@ -32,6 +32,7 @@ public class DefectRepositoryImpl implements DefectRepository {
         return create.selectFrom(DEFECT_STATUS)
                 .where(DEFECT_STATUS.ID.eq(defectTypeId))
                 .fetchOptional(row -> new DefectTypeDto(
+                        row.get(DEFECT_STATUS.ID),
                         row.get(DEFECT_STATUS.NAME),
                         row.get(DEFECT_STATUS.HAS_DISTANCE)
                 ));
@@ -70,5 +71,15 @@ public class DefectRepositoryImpl implements DefectRepository {
                 .set(APPLICATION.DEFECT_DISTANCE, defect.defectDistance())
                 .where(APPLICATION.APPLICATION_ID.eq(defect.applicationId()))
                 .execute();
+    }
+
+    @Override
+    public List<DefectTypeDto> getDefectTypes() {
+        return create.selectFrom(DEFECT_STATUS)
+                .fetch(row -> new DefectTypeDto(
+                        row.get(DEFECT_STATUS.ID),
+                        row.get(DEFECT_STATUS.NAME),
+                        row.get(DEFECT_STATUS.HAS_DISTANCE)
+                ));
     }
 }

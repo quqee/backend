@@ -16,6 +16,7 @@ public record UpdateStatementDto(
         String direction,
         OffsetDateTime deadline,
         UUID organizationCreatorId,
-        UUID statementId
+        UUID statementId,
+        UUID organizationPerformerId
 ) {
 }

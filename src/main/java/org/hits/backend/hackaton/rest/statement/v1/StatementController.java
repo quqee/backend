@@ -64,7 +64,8 @@ public class StatementController {
             @RequestParam("surface_type") String surfaceType,
             @RequestParam String direction,
             @RequestParam OffsetDateTime deadline,
-            @RequestParam UUID statementId,
+            @RequestParam("statement_id") UUID statementId,
+            @RequestParam("organization_performer_id") UUID organizationPerformerId,
             @AuthenticationPrincipal UserEntity userEntity
     ) {
         var updatedStatementDto = new UpdateStatementDto(
@@ -76,7 +77,8 @@ public class StatementController {
                 direction,
                 deadline,
                 userEntity.organizationId(),
-                statementId
+                statementId,
+                organizationPerformerId
         );
 
         statementService.updateStatement(updatedStatementDto);

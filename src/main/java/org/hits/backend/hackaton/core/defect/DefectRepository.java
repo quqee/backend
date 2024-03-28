@@ -12,4 +12,5 @@ public interface DefectRepository {
     Optional<DefectEntity> getDefectById(UUID defectId);
     UUID createDefect(DefectEntity defect);
     void updateDefect(DefectEntity defect);
+    List<DefectTypeDto> getDefectTypes();
 }
