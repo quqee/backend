@@ -31,7 +31,7 @@ public class StatementController {
     private final StatementService statementService;
 
     @PostMapping
-    public ResponseEntity<UUID> createStatement(
+    public ResponseEntity<StatementSmallDto> createStatement(
             @RequestParam("file") MultipartFile audio,
             @RequestParam("area_name") String areaName,
             @RequestParam Double length,
@@ -56,7 +56,7 @@ public class StatementController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateStatement(
+        public ResponseEntity<StatementSmallResponse> updateStatement(
             @RequestParam("file") MultipartFile audio,
             @RequestParam("area_name") String areaName,
             @RequestParam Double length,
@@ -81,8 +81,8 @@ public class StatementController {
                 organizationPerformerId
         );
 
-        statementService.updateStatement(updatedStatementDto);
-        return ResponseEntity.ok().build();
+        var updatedStatement = mapToResponse(statementService.updateStatement(updatedStatementDto));
+        return ResponseEntity.ok(updatedStatement);
     }
 
     @GetMapping("/{statementId}")

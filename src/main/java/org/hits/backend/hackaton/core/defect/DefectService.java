@@ -3,6 +3,7 @@ package org.hits.backend.hackaton.core.defect;
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.core.file.FileMetadata;
 import org.hits.backend.hackaton.core.file.StorageService;
+import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.public_interface.defect.CreateDefectDto;
 import org.hits.backend.hackaton.public_interface.defect.DefectFullDto;
 import org.hits.backend.hackaton.public_interface.defect.DefectStatus;
@@ -45,6 +46,30 @@ public class DefectService {
         return defectId;
     }
 
+    public void reviewDefect(UUID defectId, MultipartFile file, UserEntity userEntity) {
+        defectRepository.getDefectById(defectId)
+                .orElseThrow(() -> new ExceptionInApplication("Defect not found", ExceptionType.NOT_FOUND));
+
+        var fileMetadata = new FileMetadata(
+                String.format("defect_%s_review_%s", defectId, UUID.randomUUID()),
+                file.getContentType(),
+                file.getSize()
+        );
+        var uploadFileDto = new UploadFileDto(
+                fileMetadata,
+                file
+        );
+        storageService.uploadFile(uploadFileDto)
+                .doOnSuccess(aVoid -> defectPhotoRepository.createPhoto(
+                        new DefectPhotoEntity(
+                                fileMetadata.fileName(),
+                                defectId,
+                                true
+                        )
+                ))
+                .subscribe();
+    }
+
     public void updateDefect(UpdateDefectDto dto) {
         var oldDefect = defectRepository.getDefectById(dto.defectId())
                 .orElseThrow(() -> new ExceptionInApplication("Defect not found", ExceptionType.NOT_FOUND));
@@ -74,13 +99,21 @@ public class DefectService {
     public DefectFullDto getDefect(UUID defectId) {
         var defect = defectRepository.getDefectById(defectId)
             .orElseThrow(() -> new ExceptionInApplication("Defect not found", ExceptionType.NOT_FOUND));
-        var imagesPhotoLink = defectPhotoRepository.getPhotosByDefectId(defectId)
-                .stream()
-                .map(photo -> storageService.getDownloadLinkByName(photo.photoId()))
-                .toList();
 
         var defectType = defectRepository.getDefectTypeById(defect.defectStatusId())
                 .orElseThrow(() -> new ExceptionInApplication("Defect type not found", ExceptionType.NOT_FOUND));
+
+        var imagesBefore = defectPhotoRepository.getPhotosByDefectId(defectId)
+                .stream()
+                .filter(currentDefect -> !currentDefect.isReview())
+                .map(photo -> storageService.getDownloadLinkByName(photo.photoId()))
+                .toList();
+
+        var imagesAfter = defectPhotoRepository.getPhotosByDefectId(defectId)
+                .stream()
+                .filter(DefectPhotoEntity::isReview)
+                .map(photo -> storageService.getDownloadLinkByName(photo.photoId()))
+                .toList();
 
         return new DefectFullDto(
                 defect.applicationId(),
@@ -90,7 +123,8 @@ public class DefectService {
                 defectType,
                 defect.defectDistance(),
                 defect.createdAt(),
-                imagesPhotoLink
+                imagesBefore,
+                imagesAfter
         );
     }
 
@@ -113,7 +147,8 @@ public class DefectService {
                     .doOnSuccess(aVoid -> defectPhotoRepository.createPhoto(
                             new DefectPhotoEntity(
                                     fileMetadata.fileName(),
-                                    defectId
+                                    defectId,
+                                    false
                             )
                     ))
                     .subscribe();

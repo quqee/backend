@@ -84,6 +84,16 @@ public class DefectController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{defectId}/review")
+    public ResponseEntity<Void> reviewDefect(
+            @PathVariable UUID defectId,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserEntity userEntity
+    ) {
+        defectService.reviewDefect(defectId, file, userEntity);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{defectId}")
     public ResponseEntity<DefectFullResponse> getDefect(@PathVariable UUID defectId) {
         var response = mapToResponse(defectService.getDefect(defectId));
@@ -110,7 +120,8 @@ public class DefectController {
                 dto.type().name(),
                 dto.defectDistance(),
                 dto.creationDate(),
-                dto.images()
+                dto.imagesBefore(),
+                dto.imagesAfter()
         );
     }
 

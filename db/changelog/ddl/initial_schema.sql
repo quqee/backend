@@ -155,6 +155,7 @@ CREATE TABLE IF NOT EXISTS application_photo
 (
     photo_id       VARCHAR(100) NOT NULL PRIMARY KEY,
     application_id UUID         NOT NULL,
+    is_review BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (application_id) REFERENCES application (application_id)
 );
 

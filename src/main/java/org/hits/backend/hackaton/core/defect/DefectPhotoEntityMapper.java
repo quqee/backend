@@ -8,7 +8,8 @@ public class DefectPhotoEntityMapper implements RecordMapper<ApplicationPhotoRec
     public DefectPhotoEntity map(ApplicationPhotoRecord record) {
         return new DefectPhotoEntity(
                 record.getPhotoId(),
-                record.getApplicationId()
+                record.getApplicationId(),
+                record.getIsReview()
         );
     }
 }

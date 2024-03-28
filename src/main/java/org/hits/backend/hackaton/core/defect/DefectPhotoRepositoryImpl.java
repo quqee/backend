@@ -22,6 +22,7 @@ public class DefectPhotoRepositoryImpl implements DefectPhotoRepository {
         create.insertInto(APPLICATION_PHOTO)
                 .set(APPLICATION_PHOTO.PHOTO_ID, photo.photoId())
                 .set(APPLICATION_PHOTO.APPLICATION_ID, photo.defectId())
+                .set(APPLICATION_PHOTO.IS_REVIEW, photo.isReview())
                 .execute();
     }
 

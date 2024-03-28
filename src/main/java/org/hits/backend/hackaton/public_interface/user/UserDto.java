@@ -6,8 +6,14 @@ import java.util.UUID;
 
 public record UserDto(
         UUID id,
-        String username,
         String email,
+
+        @JsonProperty("organization_id")
+        UUID organizationId,
+
+        @JsonProperty("organization_name")
+        String organizationName,
+
         @JsonProperty("full_name")
         String fullName,
         @JsonProperty("online_status")

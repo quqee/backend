@@ -14,6 +14,7 @@ public record DefectFullResponse(
         @JsonProperty("type") String type,
         @JsonProperty("distance") Double defectDistance,
         @JsonProperty("create_date") OffsetDateTime creationDate,
-        @JsonProperty("pictures") List<String> images
+        @JsonProperty("pictures_before_repair") List<String> imagesBefore,
+        @JsonProperty("pictures_before_repair") List<String> imagesAfter
 ) {
 }

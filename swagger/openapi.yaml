@@ -166,7 +166,6 @@ paths:
       tags:
         - defect
       summary: Получить возможные типы дефектов
-      operation: getAvailableDefect()
       responses:
         '200':
           description: Информация о возможных типах дефектов и наличия объема
@@ -174,6 +173,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DefectTypes'
+  /defects/{defectId}/review:
+    post:
+      tags:
+        - defect
+      summary: Добавить фото выполненной работы
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: defectId
+          in: path
+          description: ID дефекта
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateReviewRequest'
+      responses:
+        '200':
+          description: Фото успешно добавлено
+        '403':
+          description: Ошибка при авторизации
 
   /statements:
     post:
@@ -735,11 +759,24 @@ components:
           type: string
           format: string
           example: OPEN
-        pictures:
+        pictures_before_repair:
           type: array
           items:
             type: string
             example: https://imgbb.com/picture
+        pictures_after_repair:
+          type: array
+          items:
+            type: string
+            example: https://imgbb.com/picture
+
+    CreateReviewRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+
 
     CreateStatementRequest:
       type: object

@@ -19,6 +19,8 @@ import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementSmallDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
 import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
+import org.hits.backend.hackaton.rest.statement.v1.response.StatementFullResponse;
+import org.hits.backend.hackaton.rest.statement.v1.response.StatementSmallResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -36,7 +38,7 @@ public class StatementService {
     private final UserService userService;
     private final ExecutorService executorService;
 
-    public UUID createStatement(CreateStatementDto dto) {
+    public StatementSmallDto createStatement(CreateStatementDto dto) {
         var newStatement = new StatementEntity(
                 null,
                 dto.organizationCreatorId(),
@@ -66,7 +68,10 @@ public class StatementService {
                 .doOnSuccess(aVoid ->
                         speechService.startProcessVoice(storageService.getDownloadLinkByName(fileMetadata.fileName()), statementId))
                 .subscribe();
-        return statementId;
+        var statement = statementRepository.getStatementById(statementId)
+                .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
+
+        return mapToDto(statement);
     }
 
     public void assignEmployeeToStatement(UserEntity authentication, AssignmentEmployee request) {
@@ -86,7 +91,7 @@ public class StatementService {
         executorService.assignExecutor(request.statementId(), request.userId());
     }
 
-    public void updateStatement(UpdateStatementDto dto) {
+    public StatementSmallDto updateStatement(UpdateStatementDto dto) {
         var oldEntity = statementRepository.getStatementById(dto.statementId())
                 .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
 
@@ -123,7 +128,7 @@ public class StatementService {
                         speechService.startProcessVoice(storageService.getDownloadLinkByName(fileMetadata.fileName()), oldEntity.statementId()))
                 .subscribe();
 
-        statementRepository.updateStatement(updatedStatement);
+        return mapToDto(updatedStatement);
     }
 
     public StatementFullDto getFullDto(UUID statementId) {

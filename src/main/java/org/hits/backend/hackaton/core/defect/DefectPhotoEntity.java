@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record DefectPhotoEntity(
         String photoId,
-        UUID defectId
+        UUID defectId,
+        boolean isReview
 ) {
 }

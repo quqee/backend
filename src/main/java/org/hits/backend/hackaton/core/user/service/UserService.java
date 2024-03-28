@@ -1,19 +1,17 @@
 package org.hits.backend.hackaton.core.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hits.backend.hackaton.core.organization.repository.OrganizationRepository;
 import org.hits.backend.hackaton.core.user.repository.UserAuthoritiesRepository;
 import org.hits.backend.hackaton.core.user.repository.UserRepository;
-import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEntity;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
-import org.hits.backend.hackaton.public_interface.common.PageResponse;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.user.CreateUserDto;
 import org.hits.backend.hackaton.public_interface.user.UserDto;
 import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
 import org.hits.backend.hackaton.rest.user.v1.request.UpdateUserProfileRequest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,7 @@ public class UserService {
     private final UserAuthoritiesRepository userAuthoritiesRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
 
     public UserEntity createUser(CreateUserDto createUserDto) {
         checkIfUsernameExists(createUserDto.username());
@@ -87,10 +86,6 @@ public class UserService {
         return mapEntityToDto(userRepository.updateUser(updatedUserEntity));
     }
 
-    public List<UserAuthoritiesEntity> findAuthoritiesByUserId(UUID userId) {
-        return userRepository.findAuthoritiesByUserId(userId);
-    }
-
     public UserDto getMyProfile(UUID id) {
         var userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new ExceptionInApplication("User not found", ExceptionType.NOT_FOUND));
@@ -138,12 +133,17 @@ public class UserService {
     }
 
     private UserDto mapEntityToDto(UserEntity entity) {
+        var organization = organizationRepository.findById(entity.organizationId())
+                .orElseThrow(() -> new ExceptionInApplication("Organization not found", ExceptionType.NOT_FOUND));
+
         return new UserDto(
                 entity.id(),
-                entity.username(),
                 entity.email(),
+                organization.organizationId(),
+                organization.name(),
                 entity.fullName(),
                 entity.onlineStatus()
+
         );
     }
 

@@ -12,6 +12,7 @@ public record DefectFullDto(
         DefectTypeDto type,
         Double defectDistance,
         OffsetDateTime creationDate,
-        List<String> images
+        List<String> imagesBefore,
+        List<String> imagesAfter
 ) {
 }
