@@ -8,4 +8,5 @@ public interface StatementRepository {
     void updateStatement(StatementEntity entity);
     Optional<StatementEntity> getStatementById(UUID statementId);
     void deleteStatement(UUID statementId);
+
 }

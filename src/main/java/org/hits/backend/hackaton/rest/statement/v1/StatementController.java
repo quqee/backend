@@ -6,6 +6,7 @@ import org.hits.backend.hackaton.core.statement.RoadType;
 import org.hits.backend.hackaton.core.statement.SurfaceType;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.public_interface.defect.DefectSmallDto;
+import org.hits.backend.hackaton.public_interface.statement.AssignmentEmployee;
 import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
 import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
@@ -13,15 +14,7 @@ import org.hits.backend.hackaton.rest.statement.v1.response.DefectSmallResponse;
 import org.hits.backend.hackaton.rest.statement.v1.response.StatementFullResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
@@ -44,7 +37,7 @@ public class StatementController {
             @RequestParam String direction,
             @RequestParam OffsetDateTime deadline,
             @AuthenticationPrincipal UserEntity userEntity
-            ) {
+    ) {
         var createStatementDto = new CreateStatementDto(
                 audio,
                 areaName,
@@ -97,6 +90,14 @@ public class StatementController {
     @DeleteMapping("/{statementId}")
     public ResponseEntity<Void> deleteStatement(@PathVariable UUID statementId) {
         statementService.deleteStatement(statementId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/employee")
+    public ResponseEntity<Void> assignEmployeeToStatement(
+            @AuthenticationPrincipal UserEntity authentication,
+            @RequestBody AssignmentEmployee request) {
+        statementService.assignEmployeeToStatement(authentication, request);
         return ResponseEntity.ok().build();
     }
 
