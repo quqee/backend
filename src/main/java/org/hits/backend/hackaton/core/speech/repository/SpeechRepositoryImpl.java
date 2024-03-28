@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.hackathon.public_.tables.VoiceScheduler.VOICE_SCHEDULER;
@@ -35,11 +36,26 @@ public class SpeechRepositoryImpl implements SpeechRepository {
 
     @Override
     public void createSpeech(SpeechEntity speechEntity) {
-        create.insertInto(VOICE_SCHEDULER)
-                .set(VOICE_SCHEDULER.APPLICATION_ID, speechEntity.applicationId())
-                .set(VOICE_SCHEDULER.SCHEDULE_TIME, speechEntity.scheduleTime())
-                .set(VOICE_SCHEDULER.STATUS, speechEntity.status().name())
-                .set(VOICE_SCHEDULER.PROCESS_ID, speechEntity.processId())
-                .execute();
+        if (getByApplicationId(speechEntity.applicationId()).isPresent()) {
+            create.update(VOICE_SCHEDULER)
+                    .set(VOICE_SCHEDULER.STATUS, SpeechStatus.IN_PROCESS.name())
+                    .set(VOICE_SCHEDULER.SCHEDULE_TIME, OffsetDateTime.now().plusSeconds(30))
+                    .set(VOICE_SCHEDULER.PROCESS_ID, speechEntity.processId())
+                    .where(VOICE_SCHEDULER.APPLICATION_ID.eq(speechEntity.applicationId()))
+                    .execute();
+        } else {
+            create.insertInto(VOICE_SCHEDULER)
+                    .set(VOICE_SCHEDULER.APPLICATION_ID, speechEntity.applicationId())
+                    .set(VOICE_SCHEDULER.SCHEDULE_TIME, speechEntity.scheduleTime())
+                    .set(VOICE_SCHEDULER.STATUS, speechEntity.status().name())
+                    .set(VOICE_SCHEDULER.PROCESS_ID, speechEntity.processId())
+                    .execute();
+        }
+    }
+
+    private Optional<SpeechEntity> getByApplicationId(UUID applicationId) {
+        return create.selectFrom(VOICE_SCHEDULER)
+                .where(VOICE_SCHEDULER.APPLICATION_ID.eq(applicationId))
+                .fetchOptional(SPEECH_ENTITY_MAPPER);
     }
 }

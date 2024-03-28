@@ -119,8 +119,8 @@ public class UserService {
                 false
         );
 
-        var fullUserEntity = userRepository.updateUser(updatedUserEntity);
-        return mapEntityToDto(fullUserEntity);
+        userRepository.updateUser(updatedUserEntity);
+        return mapEntityToDto(updatedUserEntity);
     }
 
     private UserEntity getUserEntity(UsernamePasswordAuthenticationToken authenticationToken) {
