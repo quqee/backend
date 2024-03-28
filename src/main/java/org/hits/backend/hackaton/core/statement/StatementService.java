@@ -55,19 +55,6 @@ public class StatementService {
         );
         var statementId = statementRepository.createStatement(newStatement);
 
-        var fileMetadata = new FileMetadata(
-                String.format("statement_%s_audio", statementId),
-                dto.audio().getContentType(),
-                dto.audio().getSize()
-        );
-        var uploadFileDto = new UploadFileDto(
-                fileMetadata,
-                dto.audio()
-        );
-        storageService.uploadFile(uploadFileDto)
-                .doOnSuccess(aVoid ->
-                        speechService.startProcessVoice(storageService.getDownloadLinkByName(fileMetadata.fileName()), statementId))
-                .subscribe();
         var statement = statementRepository.getStatementById(statementId)
                 .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
 

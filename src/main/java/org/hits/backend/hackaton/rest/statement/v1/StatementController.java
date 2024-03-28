@@ -33,7 +33,6 @@ public class StatementController {
 
     @PostMapping
     public ResponseEntity<StatementSmallDto> createStatement(
-            @RequestParam("file") MultipartFile audio,
             @RequestParam("area_name") String areaName,
             @RequestParam Double length,
             @RequestParam("road_type") String roadType,
@@ -43,7 +42,6 @@ public class StatementController {
             @AuthenticationPrincipal UserEntity userEntity
     ) {
         var createStatementDto = new CreateStatementDto(
-                audio,
                 areaName,
                 length,
                 RoadType.getTypeByName(roadType),
