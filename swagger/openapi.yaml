@@ -282,7 +282,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedStatementDtoResult'
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatementResponseDto'
         '403':
           description: Ошибка при авторизации
 
@@ -303,10 +305,6 @@ paths:
       responses:
         '200':
           description: Информация о ведомости.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StatementResponseDto'
         '403':
           description: Ошибка при авторизации
 
@@ -335,29 +333,6 @@ paths:
                 $ref: '#/components/schemas/EmployeeDto'
         '403':
           description: Ошибка при авторизации
-    put:
-      tags:
-        - organization
-      summary: Обновить профиль работника
-      description: Работодатель обновляет профиль работника
-      operationId: updateEmployee()
-      security:
-        - auth-bearer: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateEmployeeDto'
-      responses:
-        '200':
-          description: Профиль сотрудника
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EmployeeDto'
-        '403':
-          description: Ошибка при авторизации
 
   /organizations/employee/all:
     get:
@@ -367,56 +342,19 @@ paths:
       operationId: getAllEmployee()
       security:
         - auth-bearer: []
-      parameters:
-        - name: page
-          in: query
-          description: Номер страницы для пагинации. По умолчанию 0.
-          required: false
-          schema:
-            type: integer
-            format: int32
-        - name: size
-          in: query
-          description: Количество сообщений на странице. По умолчанию 10.
-          required: false
-          schema:
-            type: integer
-            format: int32
       responses:
         '200':
           description: Список работников
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedEmployeeDtoResult'
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeDto'
         '403':
           description: Ошибка при авторизации
 
   /organizations/{employeeId}:
-    get:
-      tags:
-        - organization
-      summary: "Получить профиль работника"
-      description: ""
-      operationId: getEmployee()
-      security:
-        - auth-bearer: []
-      parameters:
-        - name: employeeId
-          in: path
-          description: ID работника, которого нужно получить.
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EmployeeDto'
-        '403':
-          description: Ошибка при авторизации
     delete:
       tags:
         - organization
@@ -686,7 +624,14 @@ components:
           type: number
           format: double
           nullable: false
-        files:
+        statement_id:
+          type: string
+          format: uuid
+          nullable: false
+        address:
+          type: string
+          example: Пермь ул Ленина д. 1
+        photos:
           type: array
           items:
             type: string
@@ -711,7 +656,17 @@ components:
         defect_distance:
           type: number
           format: double
-        files:
+        statement_id:
+          type: string
+          format: uuid
+          nullable: false
+        address:
+          type: string
+          example: Пермь ул Ленина д. 1
+        defect_status:
+          type: string
+          example: COMPLETED
+        photos:
           type: array
           items:
             type: string
@@ -752,7 +707,7 @@ components:
     AdditionalDefectResponseDto:
       type: object
       properties:
-        defect_id:
+        id:
           type: string
           format: uuid
         longitude:
@@ -763,11 +718,11 @@ components:
           type: number
           format: double
           nullable: false
-        defect_type:
+        type:
           type: string
           example: Поперечная трещина
           nullable: false
-        defect_distance:
+        distance:
           type: number
           format: double
           nullable: false
@@ -776,7 +731,7 @@ components:
           format: date-time
           example: '2025-07-21T17:32:28Z'
           nullable: false
-        application_status:
+        status:
           type: string
           format: string
           example: OPEN
@@ -841,17 +796,15 @@ components:
           format: date-time
           example: '2025-07-21T17:32:28Z'
           nullable: false
-        statement_status:
+        statement_id:
+          type: string
+          format: uuid
+        status:
           type: string
           example: IN_PROCESS
         organization_performer_id:
           type: string
           format: uuid
-        defects:
-          type: array
-          items:
-            type: string
-            format: uuid
         file:
           type: string
           format: binary
@@ -900,7 +853,7 @@ components:
         description:
           type: string
           example: Большие ямы на дорогах
-        statement_status:
+        status:
           type: string
           example: REJECTED
         organization_performer_id:
@@ -945,7 +898,7 @@ components:
         description:
           type: string
           example: Большие ямы на дорогах
-        statement_status:
+        status:
           type: string
           example: REJECTED
         organization_performer_id:
@@ -961,57 +914,35 @@ components:
             $ref: '#/components/schemas/ShortDefectDto'
 
     DefectTypes:
-      type: object
-      properties:
-        types:
-          type: array
-          items:
-            type: object
-            properties:
-              defect_type:
-                type: string
-                example: Стирание краски
-              has_distance:
-                type: boolean
-                example: true
+      type: array
+      items:
+        properties:
+          name:
+            type: string
+            example: Стирание краски
+          has_distance:
+            type: boolean
+            example: true
+          id:
+            type: string
+            format: uuid
+
 
     ShortDefectDto:
       type: object
       properties:
-        defect_id:
+        id:
           type: string
           format: uuid
-        application_status:
+        status:
           type: string
           example: OPEN
-        defect_type:
+        type:
           type: string
           example: REJECTED
         description:
           type: string
           example: Вожовский переулок
-
-    PaginatedStatementDtoResult:
-      type: object
-      properties:
-        content:
-          $ref: '#/components/schemas/StatementResponseDto'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-      required:
-        - content
-        - metadata
-
-    PaginatedEmployeeDtoResult:
-      type: object
-      properties:
-        content:
-          $ref: '#/components/schemas/EmployeeDto'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
-      required:
-        - content
-        - metadata
 
     PaginatedMessageDtoResult:
       type: object
