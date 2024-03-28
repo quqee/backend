@@ -8,7 +8,7 @@ public class UserEntityMapper implements RecordMapper<UsersRecord, UserEntity> {
     @Override
     public UserEntity map(UsersRecord record) {
         return new UserEntity(
-                record.getId(),
+                record.getUserId(),
                 record.getUsername(),
                 record.getPassword(),
                 record.getEmail(),
