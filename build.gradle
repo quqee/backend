@@ -63,6 +63,8 @@ dependencies {
     implementation libs.amazon.apache.client
 
     implementation libs.spring.client
+
+    implementation libs.email.api
 }
 
 tasks.named('test') {
