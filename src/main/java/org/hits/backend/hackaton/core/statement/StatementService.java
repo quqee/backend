@@ -1,13 +1,9 @@
-package org.hits.backend.hackaton.core;
+package org.hits.backend.hackaton.core.statement;
 
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.core.file.S3StorageService;
 import org.hits.backend.hackaton.core.file.FileMetadata;
 import org.hits.backend.hackaton.core.speech.SpeechService;
-import org.hits.backend.hackaton.core.statement.StatementEntity;
-import org.hits.backend.hackaton.core.statement.StatementRepository;
-import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
-import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.file.UploadFileDto;
 import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
 import org.springframework.stereotype.Service;
@@ -34,7 +30,8 @@ public class StatementService {
                 dto.surfaceType(),
                 dto.direction(),
                 dto.deadline(),
-                null
+                null,
+                StatementStatus.OPEN
         );
         var statementId = statementRepository.createStatement(newStatement);
 
@@ -52,25 +49,5 @@ public class StatementService {
                         speechService.startProcessVoice(storageService.getDownloadLinkByName(fileMetadata.fileName()), statementId))
                 .subscribe();
         return statementId;
-    }
-
-    public void updateStatementText(UUID statementId, String text) {
-        var oldStatement = statementRepository.getStatementById(statementId)
-                .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
-
-        var newStatement = new StatementEntity(
-                oldStatement.statementId(),
-                oldStatement.organizationCreatorId(),
-                oldStatement.organizationPerformerId(),
-                oldStatement.creationDate(),
-                oldStatement.areaName(),
-                oldStatement.length(),
-                oldStatement.roadType(),
-                oldStatement.surfaceType(),
-                oldStatement.direction(),
-                oldStatement.deadline(),
-                text
-        );
-        statementRepository.updateStatement(newStatement);
     }
 }

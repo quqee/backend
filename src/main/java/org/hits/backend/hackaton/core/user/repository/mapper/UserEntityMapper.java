@@ -13,7 +13,8 @@ public class UserEntityMapper implements RecordMapper<UsersRecord, UserEntity> {
                 record.getPassword(),
                 record.getEmail(),
                 record.getFullName(),
-                record.getOnlineStatus()
+                record.getOnlineStatus(),
+                record.getOrganizationId()
         );
     }
 }

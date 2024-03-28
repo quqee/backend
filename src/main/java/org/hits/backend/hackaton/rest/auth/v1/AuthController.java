@@ -25,7 +25,8 @@ public class AuthController {
                 request.username(),
                 request.password(),
                 request.email(),
-                request.fullName()
+                request.fullName(),
+                request.organizationId()
         );
         return authenticationService.signUp(dto);
     }

@@ -32,7 +32,8 @@ public class UserService {
                 passwordEncoder.encode(createUserDto.password()),
                 createUserDto.email(),
                 createUserDto.fullName(),
-                false
+                false,
+                createUserDto.organizationId()
         );
 
         var fullUserEntity = userRepository.createUser(userEntity, List.of(UserAuthoritiesEnum.DEFAULT));
@@ -65,7 +66,8 @@ public class UserService {
                 user.password(),
                 user.email(),
                 user.fullName(),
-                status
+                status,
+                user.organizationId()
         );
 
         return mapEntityToDto(userRepository.updateUser(updatedUserEntity));
@@ -87,7 +89,8 @@ public class UserService {
                 userEntity.password(),
                 request.email(),
                 request.fullName(),
-                false
+                false,
+                userEntity.organizationId()
         );
 
         var fullUserEntity = userRepository.updateUser(updatedUserEntity);

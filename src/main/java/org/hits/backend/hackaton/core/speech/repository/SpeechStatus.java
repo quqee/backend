@@ -7,7 +7,7 @@ import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 @RequiredArgsConstructor
 public enum SpeechStatus {
     IN_PROCESS("IN_PROCESS"),
-    EXTRACTED("EXTRACTED"),
+    EXECUTED("EXECUTED"),
     ;
     private final String status;
 

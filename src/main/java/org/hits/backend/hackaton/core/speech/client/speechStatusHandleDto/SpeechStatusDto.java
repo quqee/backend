@@ -54,19 +54,24 @@ public record SpeechStatusDto(
 ) {
     public record SpeechStatusResponseDto(
             String type,
-            AlternativeDto[] alternatives
+            ChunksDto[] chunks
     ) {
-        public record AlternativeDto(
-                WordDto[] words,
-                String text,
-                Integer confidence
+        public record ChunksDto(
+                AlternativeDto[] alternatives,
+                String channelTag
         ) {
-            public record WordDto(
-                    String startTime,
-                    String endTime,
-                    String word,
+            public record AlternativeDto(
+                    WordDto[] words,
+                    String text,
                     Integer confidence
             ) {
+                public record WordDto(
+                        String startTime,
+                        String endTime,
+                        String word,
+                        Integer confidence
+                ) {
+                }
             }
         }
     }

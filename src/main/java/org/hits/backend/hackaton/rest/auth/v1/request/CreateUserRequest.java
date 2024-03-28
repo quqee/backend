@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 public record CreateUserRequest(
         @NotBlank(message = "Invalid username: EMPTY username")
         @NotNull(message = "Invalid username: username is NULL")
@@ -24,6 +26,8 @@ public record CreateUserRequest(
         @NotBlank(message = "Invalid fullName: EMPTY fullName")
         @NotNull(message = "Invalid fullName: fullName is NULL")
         @JsonProperty("full_name")
-        String fullName
+        String fullName,
+
+        UUID organizationId
 ) {
 }

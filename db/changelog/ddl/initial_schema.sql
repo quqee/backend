@@ -72,7 +72,6 @@ CREATE TABLE statement
     FOREIGN KEY (organization_performer_id) REFERENCES organization (organization_id)
 );
 
-
 -- rollback DROP TABLE statement;
 
 -- changeset T9404:4
