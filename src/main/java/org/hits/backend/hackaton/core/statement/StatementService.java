@@ -74,6 +74,11 @@ public class StatementService {
         return mapToDto(statement);
     }
 
+    public List<StatementSmallDto> getStatements(String statementStatus) {
+        var statementsEntity = statementRepository.getStatements(statementStatus);
+        return statementsEntity.stream().map(this::mapToDto).toList();
+    }
+
     public void assignEmployeeToStatement(UserEntity authentication, AssignmentEmployee request) {
         var employee = userService.findUserById(request.userId());
 

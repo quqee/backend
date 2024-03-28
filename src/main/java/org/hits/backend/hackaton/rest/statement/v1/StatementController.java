@@ -88,6 +88,14 @@ public class StatementController {
         return ResponseEntity.ok(updatedStatement);
     }
 
+    @GetMapping
+    public ResponseEntity<List<StatementSmallResponse>> getAllStatements(
+            @RequestParam(required = false) String status) {
+        var statements = statementService.getStatements(status);
+        var responseStatements = statements.stream().map(this::mapToResponse).toList();
+        return ResponseEntity.ok(responseStatements);
+    }
+
     @GetMapping("/{statementId}")
     public ResponseEntity<StatementFullResponse> getStatement(@PathVariable UUID statementId) {
         var response = statementService.getFullDto(statementId);

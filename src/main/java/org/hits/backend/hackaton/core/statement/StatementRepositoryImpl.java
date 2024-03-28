@@ -1,9 +1,12 @@
 package org.hits.backend.hackaton.core.statement;
 
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -65,6 +68,21 @@ public class StatementRepositoryImpl implements StatementRepository {
         create.deleteFrom(STATEMENT)
                 .where(STATEMENT.STATEMENT_ID.eq(statementId))
                 .execute();
+    }
+
+    @Override
+    public List<StatementEntity> getStatements(String statementStatus) {
+        var query = create.selectFrom(STATEMENT);
+
+        Condition condition = DSL.trueCondition();
+
+        if (statementStatus != null && !statementStatus.isEmpty()) {
+            condition = condition.and(STATEMENT.STATEMENT_STATUS.eq(statementStatus));
+        }
+
+        return query.where(condition)
+                .fetch()
+                .map(STATEMENT_ENTITY_MAPPER);
     }
 
     @Override
