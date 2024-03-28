@@ -246,21 +246,18 @@ INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN');
 
 
-INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
+INSERT INTO statement (statement_id, organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
                         direction, deadline, description, organization_performer_id)
-VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'OPEN', '2024-06-01 12:00:00',
-        'ул. Ленина д. 1', 10, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', 'e58ed763-928c-4155-bee9-fdbaaadc15f3');
-
-INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
-                        direction, deadline, description)
-VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'IN_PROCESS', '2024-06-01 12:00:00',
-        'пер. Буяновский 3а', 100, 'ROAD', 'GROUND', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги');
-
-INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
-                        direction, deadline, description, organization_performer_id)
-VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'COMPLETED', '2024-06-01 12:00:00',
+VALUES ('f1ef6a45-1c9f-4acd-ab17-1ec6955a4f0d', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'OPEN', '2024-06-01 12:00:00',
+        'ул. Ленина д. 1', 10, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', 'e58ed763-928c-4155-bee9-fdbaaadc15f3'),
+       ('0d25c639-315f-4139-90d2-7e67876cabdf', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'IN_PROCESS', '2024-06-01 12:00:00',
+        'пер. Буяновский 3а', 100, 'ROAD', 'GROUND', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', null),
+       ('32fb5275-4b91-45b3-aded-f0d716048f1a', 'e58ed763-928c-4155-bee9-fdbaaadc15f3', 'COMPLETED', '2024-06-01 12:00:00',
         'пр-кт Победы 12', 44, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', 'e58ed763-928c-4155-bee9-fdbaaadc15f3');
 
+INSERT INTO application (statement_id, longitude, latitude, application_status, address, created_time, defect_distance, defect_status_id)
+VALUES ('f1ef6a45-1c9f-4acd-ab17-1ec6955a4f0d', 123.4567, 123.4567, 'IN_PROCESS', 'Perm Kosmonavtov', '2024-06-01 12:00:00', 100, 1),
+       ('f1ef6a45-1c9f-4acd-ab17-1ec6955a4f0d', 123.45888, 123.45879, 'IN_PROCESS', 'Perm Kosmonavtov', '2024-06-01 12:00:00', 10, 1);
 
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM user WHERE username = 'admin';
