@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import org.hits.backend.hackaton.core.organization.repository.OrganizationRepository;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.core.user.service.UserService;
-import org.hits.backend.hackaton.public_interface.common.PageResponse;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.organization.EmployeeRequest;
 import org.hits.backend.hackaton.public_interface.user.CreateUserDto;
 import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -54,11 +53,10 @@ public class OrganizationService {
         userService.deleteUser(employeeId);
     }
 
-    public PageResponse<EmployeeDto> getAllEmployees(UserEntity authentication, int page, int size) {
+    public List<EmployeeDto> getAllEmployees(UserEntity authentication) {
         checkIfOrganizationExists(authentication);
 
-        PageRequest pageable = PageRequest.of(page, size);
-        return userService.getAllEmployees(authentication.organizationId(), pageable);
+        return userService.getAllEmployees(authentication.organizationId());
     }
 
     public EmployeeDto getEmployee(UUID employeeId, UserEntity authentication) {

@@ -10,7 +10,6 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStepN;
 import org.jooq.impl.DSL;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,20 +108,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<UserEntity> findAllEmployees(UUID organizationId, PageRequest pageable) {
-        var offset = pageable.getPageNumber() * pageable.getPageSize();
-        var limit = pageable.getPageSize();
-
+    public List<UserEntity> findAllEmployees(UUID organizationId) {
         return create.selectFrom(USERS)
                 .where(USERS.ORGANIZATION_ID.eq(organizationId))
-                .limit(limit)
-                .offset(offset)
                 .fetch(USER_ENTITY_MAPPER);
-    }
-
-    @Override
-    public int countAllEmployees(UUID organizationId) {
-        return create.fetchCount(USERS, USERS.ORGANIZATION_ID.eq(organizationId));
     }
 
     @Override

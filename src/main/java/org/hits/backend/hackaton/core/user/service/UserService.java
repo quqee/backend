@@ -97,10 +97,10 @@ public class UserService {
         return mapEntityToDto(userEntity);
     }
 
-    public PageResponse<EmployeeDto> getAllEmployees(UUID organizationId, PageRequest pageable) {
-        var employeesEntity = userRepository.findAllEmployees(organizationId, pageable);
-        var totalElements = userRepository.countAllEmployees(organizationId);
-        var employeesDto = employeesEntity.stream()
+    public List<EmployeeDto> getAllEmployees(UUID organizationId) {
+        var employeesEntity = userRepository.findAllEmployees(organizationId);
+
+        return employeesEntity.stream()
                 .map(entity -> EmployeeDto.builder()
                         .user_id(entity.id())
                         .username(entity.username())
@@ -108,9 +108,6 @@ public class UserService {
                         .email(entity.email())
                         .build())
                 .toList();
-
-        var metadata = new PageResponse.Metadata(pageable.getPageNumber(), pageable.getPageSize(), totalElements);
-        return new PageResponse<>(employeesDto, metadata);
     }
 
     public UserDto updateMyProfile(UUID id, UpdateUserProfileRequest request) {

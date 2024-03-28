@@ -3,13 +3,13 @@ package org.hits.backend.hackaton.rest.organization.v1;
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.core.organization.service.OrganizationService;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
-import org.hits.backend.hackaton.public_interface.common.PageResponse;
 import org.hits.backend.hackaton.public_interface.organization.EmployeeRequest;
 import org.hits.backend.hackaton.rest.organization.v1.request.AddEmployeeRequest;
 import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,10 +33,8 @@ public class OrganizationController {
     }
 
     @GetMapping("/employee/all")
-    public PageResponse<EmployeeDto> getAllEmployees(@AuthenticationPrincipal UserEntity authentication,
-                                                     @RequestParam(required = false, defaultValue = "0") int page,
-                                                     @RequestParam(required = false, defaultValue = "10") int size) {
-        return organizationService.getAllEmployees(authentication, page, size);
+    public List<EmployeeDto> getAllEmployees(@AuthenticationPrincipal UserEntity authentication) {
+        return organizationService.getAllEmployees(authentication);
     }
 
     @GetMapping("/{employeeId}")
