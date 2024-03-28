@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +82,15 @@ public class DefectController {
         );
 
         defectService.updateDefect(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{defectId}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable UUID defectId,
+            @RequestBody UpdateDefectStatusRequest request
+    ) {
+        defectService.updateStatus(defectId, DefectStatus.getStatusByName(request.status()));
         return ResponseEntity.ok().build();
     }
 

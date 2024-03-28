@@ -136,6 +136,25 @@ public class DefectService {
         );
     }
 
+    public void updateStatus(UUID defectId, DefectStatus status) {
+        var oldDefect = defectRepository.getDefectById(defectId)
+                .orElseThrow(() -> new ExceptionInApplication("Defect not found", ExceptionType.NOT_FOUND));
+
+        var newDefect = new DefectEntity(
+                oldDefect.applicationId(),
+                oldDefect.statementId(),
+                oldDefect.longitude(),
+                oldDefect.latitude(),
+                status,
+                oldDefect.defectStatusId(),
+                oldDefect.address(),
+                oldDefect.createdAt(),
+                oldDefect.defectDistance()
+        );
+
+        defectRepository.updateDefect(newDefect);
+    }
+
     public List<DefectTypeDto> getDefectTypes() {
         return defectRepository.getDefectTypes();
     }
