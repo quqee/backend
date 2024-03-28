@@ -1,0 +1,129 @@
+package org.hits.backend.hackaton.rest.statement.v1;
+
+import lombok.RequiredArgsConstructor;
+import org.hits.backend.hackaton.core.statement.StatementService;
+import org.hits.backend.hackaton.core.statement.RoadType;
+import org.hits.backend.hackaton.core.statement.SurfaceType;
+import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
+import org.hits.backend.hackaton.public_interface.defect.DefectSmallDto;
+import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
+import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
+import org.hits.backend.hackaton.rest.statement.v1.response.DefectSmallResponse;
+import org.hits.backend.hackaton.rest.statement.v1.response.StatementFullResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("*")
+@RequestMapping("/api/v1/statements")
+public class StatementController {
+    private final StatementService statementService;
+
+    @PostMapping
+    public ResponseEntity<UUID> createStatement(
+            @RequestParam("file") MultipartFile audio,
+            @RequestParam("area_name") String areaName,
+            @RequestParam Double length,
+            @RequestParam("road_type") String roadType,
+            @RequestParam("surface_type") String surfaceType,
+            @RequestParam String direction,
+            @RequestParam OffsetDateTime deadline,
+            @AuthenticationPrincipal UserEntity userEntity
+            ) {
+        var createStatementDto = new CreateStatementDto(
+                audio,
+                areaName,
+                length,
+                RoadType.getTypeByName(roadType),
+                SurfaceType.getTypeByName(surfaceType),
+                direction,
+                deadline,
+                userEntity.organizationId()
+        );
+
+        return ResponseEntity.ok(statementService.createStatement(createStatementDto));
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateStatement(
+            @RequestParam("file") MultipartFile audio,
+            @RequestParam("area_name") String areaName,
+            @RequestParam Double length,
+            @RequestParam("road_type") String roadType,
+            @RequestParam("surface_type") String surfaceType,
+            @RequestParam String direction,
+            @RequestParam OffsetDateTime deadline,
+            @RequestParam UUID statementId,
+            @AuthenticationPrincipal UserEntity userEntity
+    ) {
+        var updatedStatementDto = new UpdateStatementDto(
+                audio,
+                areaName,
+                length,
+                RoadType.getTypeByName(roadType),
+                SurfaceType.getTypeByName(surfaceType),
+                direction,
+                deadline,
+                userEntity.organizationId(),
+                statementId
+        );
+
+        statementService.updateStatement(updatedStatementDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{statementId}")
+    public ResponseEntity<StatementFullResponse> getStatement(@PathVariable UUID statementId) {
+        var response = statementService.getFullDto(statementId);
+
+        return ResponseEntity.ok(mapToResponse(response));
+    }
+
+    @DeleteMapping("/{statementId}")
+    public ResponseEntity<Void> deleteStatement(@PathVariable UUID statementId) {
+        statementService.deleteStatement(statementId);
+        return ResponseEntity.ok().build();
+    }
+
+    private StatementFullResponse mapToResponse(StatementFullDto dto) {
+        return new StatementFullResponse(
+                dto.statementId(),
+                dto.areaName(),
+                dto.length(),
+                dto.roadType().name(),
+                dto.surfaceType().name(),
+                dto.direction(),
+                dto.deadline(),
+                dto.createdAt(),
+                dto.description(),
+                dto.status().name(),
+                dto.organizationCreatorId(),
+                dto.organizationPerformerId(),
+                dto.defects().stream().map(this::mapToResponse).toList()
+        );
+    }
+
+    private DefectSmallResponse mapToResponse(DefectSmallDto dto) {
+        return new DefectSmallResponse(
+                dto.defectId(),
+                dto.type().name(),
+                dto.status().name(),
+                dto.description()
+        );
+    }
+}
