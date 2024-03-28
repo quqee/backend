@@ -24,12 +24,10 @@ public class S3StorageService implements StorageService {
     private final String url;
 
     public S3StorageService(@Value("${amazonProperties.bucketName}") String bucketName,
-                            @Value("${amazonProperties.endpointUrl}") String url,
-                            SpeechService speechService
+                            @Value("${amazonProperties.endpointUrl}") String url
                                 ) {
         this.bucketName = bucketName;
         this.url = url;
-        this.speechService = speechService;
     }
 
     @Override
