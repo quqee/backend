@@ -1,5 +1,7 @@
 package org.hits.backend.hackaton.core.statement;
 
+import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
