@@ -13,6 +13,18 @@ yandexApi:
     speechEndpoint: /speech/stt/v2/longRunningRecognize
     statusEndpoint: /operations/{id}
 
+email:
+    enabled: "true"
+    from: "zdraviymalish@gmail.com"
+    username: "zdraviymalish@gmail.com"
+    password: "nfjz gwye cyxb yplw"
+    smtp:
+        auth: "true"
+        starttls:
+            enable: "true"
+        host: "smtp.gmail.com"
+        port: "587"
+
 scheduler:
     updateTextFixedRate: 10000
 
