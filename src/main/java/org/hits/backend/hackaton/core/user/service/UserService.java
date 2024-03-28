@@ -1,6 +1,7 @@
 package org.hits.backend.hackaton.core.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hits.backend.hackaton.core.user.repository.UserAuthoritiesRepository;
 import org.hits.backend.hackaton.core.user.repository.UserRepository;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEntity;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserAuthoritiesRepository userAuthoritiesRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
@@ -40,13 +42,12 @@ public class UserService {
                 false
         );
 
-        try {
-            return userRepository.createUser(userEntity, List.of(UserAuthoritiesEnum.DEFAULT));
-        } catch (Exception e) {
-            System.out.println(e);
-            System.out.println(e.getMessage());
-        }
-        return null;
+        return userRepository.createUser(userEntity, List.of(UserAuthoritiesEnum.DEFAULT));
+    }
+
+    public void deleteUser(UUID userId) {
+        userAuthoritiesRepository.deleteByUserId(userId);
+        userRepository.deleteUser(userId);
     }
 
     public UserEntity findUserById(UUID userId) {

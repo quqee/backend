@@ -32,12 +32,6 @@ public class OrganizationController {
         return organizationService.addEmployee(authentication, employeeRequest);
     }
 
-    @PutMapping()
-    public EmployeeDto updateEmployee(@AuthenticationPrincipal UserEntity authentication,
-                                      @RequestBody EmployeeRequest request) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
     @GetMapping("/employee/all")
     public PageResponse<EmployeeDto> getAllEmployees(@AuthenticationPrincipal UserEntity authentication,
                                                      @RequestParam(required = false, defaultValue = "0") int page,
@@ -49,5 +43,11 @@ public class OrganizationController {
     public EmployeeDto getEmployee(@AuthenticationPrincipal UserEntity authentication,
                                    @PathVariable String employeeId) {
         return organizationService.getEmployee(UUID.fromString(employeeId), authentication);
+    }
+
+    @DeleteMapping("/{employeeId}")
+    public void deleteEmployee(@AuthenticationPrincipal UserEntity authentication,
+                               @PathVariable String employeeId) {
+        organizationService.deleteEmployee(UUID.fromString(employeeId), authentication);
     }
 }

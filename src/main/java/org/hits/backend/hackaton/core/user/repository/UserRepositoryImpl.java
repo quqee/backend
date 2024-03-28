@@ -6,7 +6,6 @@ import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.core.user.repository.mapper.UserAuthoritiesEntityMapper;
 import org.hits.backend.hackaton.core.user.repository.mapper.UserEntityMapper;
-import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStepN;
@@ -124,5 +123,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public int countAllEmployees(UUID organizationId) {
         return create.fetchCount(USERS, USERS.ORGANIZATION_ID.eq(organizationId));
+    }
+
+    @Override
+    public void deleteUser(UUID userId) {
+        create.deleteFrom(USERS)
+                .where(USERS.USER_ID.eq(userId))
+                .execute();
     }
 }

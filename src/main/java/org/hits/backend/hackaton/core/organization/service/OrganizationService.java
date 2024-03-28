@@ -42,6 +42,18 @@ public class OrganizationService {
                 .build();
     }
 
+    public void deleteEmployee(UUID employeeId, UserEntity authentication) {
+        checkIfOrganizationExists(authentication);
+
+        var user = userService.findUserById(employeeId);
+
+        if (!user.organizationId().equals(authentication.organizationId())) {
+            throw new ExceptionInApplication("Employee not found", ExceptionType.NOT_FOUND);
+        }
+
+        userService.deleteUser(employeeId);
+    }
+
     public PageResponse<EmployeeDto> getAllEmployees(UserEntity authentication, int page, int size) {
         checkIfOrganizationExists(authentication);
 

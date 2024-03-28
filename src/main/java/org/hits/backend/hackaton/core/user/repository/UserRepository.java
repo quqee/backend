@@ -20,4 +20,5 @@ public interface UserRepository {
     List<UserEntity> findConnectedUsers(Boolean onlineStatus);
     List<UserEntity> findAllEmployees(UUID organizationId, PageRequest pageable);
     int countAllEmployees(UUID organizationId);
+    void deleteUser(UUID userId);
 }
