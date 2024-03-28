@@ -640,9 +640,8 @@ components:
           type: number
           format: double
           nullable: false
-        defect_type:
-          type: string
-          example: Поперечная трещина
+        defect_type_id:
+          type: integer
           nullable: false
         defect_distance:
           type: number
@@ -674,9 +673,9 @@ components:
         latitude:
           type: number
           format: double
-        defect_type:
-          type: string
-          example: Поперечная трещина
+        defect_type_id:
+          type: integer
+          nullable: false
         defect_distance:
           type: number
           format: double
