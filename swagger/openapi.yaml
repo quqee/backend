@@ -161,6 +161,19 @@ paths:
                 $ref: '#/components/schemas/AdditionalDefectResponseDto'
         '403':
           description: Ошибка при авторизации
+  /defects/types:
+    get:
+      tags:
+        - defect
+      summary: Получить возможные типы дефектов
+      operation: getAvailableDefect()
+      responses:
+        '200':
+          description: Информация о возможных типах дефектов и наличия объема
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefectTypes'
 
   /statements:
     post:
@@ -935,6 +948,20 @@ components:
           items:
             $ref: '#/components/schemas/ShortDefectDto'
 
+    DefectTypes:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: object
+            properties:
+              defect_type:
+                type: string
+                example: Стирание краски
+              has_distance:
+                type: boolean
+                example: true
 
     ShortDefectDto:
       type: object
