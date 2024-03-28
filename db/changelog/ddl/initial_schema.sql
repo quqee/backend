@@ -65,8 +65,6 @@ CREATE TABLE statement
                                                                          'SAND',
                                                                          'CONCRETE', 'REINFORCED_CONCRETE', 'COMBINED',
                                                                          'OTHER') ),
-    statement_status VARCHAR(50) CHECK ( statement_status IN
-                                           ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
     direction                 VARCHAR(255),
     deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
     description               VARCHAR(255),
