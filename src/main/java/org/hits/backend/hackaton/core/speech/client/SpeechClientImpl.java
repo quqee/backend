@@ -16,8 +16,6 @@ public class SpeechClientImpl implements SpeechClient {
     private final WebClient webClient;
     @Value("${yandexApi.speechEndpoint}")
     private String speechEndpoint;
-    @Value("${yandexApi.statusEndpoint}")
-    private String statusEndpoint;
 
     @Override
     public Mono<SpeechClientResponseDto> sendToProcess(String fileUri) {
@@ -40,15 +38,6 @@ public class SpeechClientImpl implements SpeechClient {
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(SpeechClientResponseDto.class);
-    }
-
-    @Override
-    public Mono<SpeechStatusDto> getStatus(String id) {
-        return webClient
-                .get()
-                .uri(statusEndpoint, id)
-                .retrieve()
-                .bodyToMono(SpeechStatusDto.class);
     }
 
 }

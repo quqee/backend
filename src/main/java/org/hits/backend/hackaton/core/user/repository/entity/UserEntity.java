@@ -11,6 +11,7 @@ public record UserEntity(
         String password,
         String email,
         String fullName,
-        boolean onlineStatus
+        boolean onlineStatus,
+        UUID organizationId
 ) {
 }

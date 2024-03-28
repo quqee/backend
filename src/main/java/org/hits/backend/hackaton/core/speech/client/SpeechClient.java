@@ -6,5 +6,4 @@ import reactor.core.publisher.Mono;
 
 public interface SpeechClient {
     Mono<SpeechClientResponseDto> sendToProcess(String fileUri);
-    Mono<SpeechStatusDto> getStatus(String id);
 }
