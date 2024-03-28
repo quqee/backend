@@ -55,13 +55,15 @@ CREATE TABLE statement
     organization_creator_id   UUID                     NOT NULL,
     organization_performer_id UUID,
     statement_status          VARCHAR(50)              NOT NULL CHECK ( statement_status IN
-                                                                        ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
+                                                                        ('OPEN', 'REJECTED', 'IN_PROCESS',
+                                                                         'WAIT_ACCEPT', 'COMPLETED') ),
     create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
     area_name                 VARCHAR(255)             NOT NULL,
     length                    DOUBLE PRECISION         NOT NULL,
     road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('HIGHWAY', 'EXPRESSWAY', 'ROAD') ),
     surface_type              VARCHAR(255)             NOT NULL CHECK ( surface_type IN
-                                                                        ('ASPHALT', 'COBBLESTONE', 'CRUSHED_STONE', 'GROUND',
+                                                                        ('ASPHALT', 'COBBLESTONE', 'CRUSHED_STONE',
+                                                                         'GROUND',
                                                                          'SAND',
                                                                          'CONCRETE', 'REINFORCED_CONCRETE', 'COMBINED',
                                                                          'OTHER') ),
@@ -137,8 +139,7 @@ CREATE TABLE IF NOT EXISTS application
     statement_id       UUID,
     longitude          DOUBLE PRECISION         NOT NULL,
     latitude           DOUBLE PRECISION         NOT NULL,
-    application_status VARCHAR(50) CHECK ( application_status IN
-                                           ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
+    application_status VARCHAR(50) CHECK ( application_status IN ('IN_PROCESS', 'REJECTED', 'COMPLETED') ),
     defect_status_id   SERIAL                   NOT NULL,
     address            VARCHAR(255),
     created_time       TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -155,7 +156,7 @@ CREATE TABLE IF NOT EXISTS application_photo
 (
     photo_id       VARCHAR(100) NOT NULL PRIMARY KEY,
     application_id UUID         NOT NULL,
-    is_review BOOLEAN DEFAULT FALSE,
+    is_review      BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (application_id) REFERENCES application (application_id)
 );
 
@@ -257,6 +258,23 @@ VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru')
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN');
 
+
+INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
+                        direction, deadline, description, organization_performer_id)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'OPEN', '2024-06-01 12:00:00',
+        'ул. Ленина д. 1', 10, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', (SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'));
+
+INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
+                        direction, deadline, description)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'IN_PROCESS', '2024-06-01 12:00:00',
+        'пер. Буяновский 3а', 100, 'ROAD', 'GROUND', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги');
+
+INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
+                        direction, deadline, description, organization_performer_id)
+VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'COMPLETED', '2024-06-01 12:00:00',
+        'пр-кт Победы 12', 44, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', (SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'));
+
+
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM user WHERE username = 'admin';
 -- rollback DELETE FROM organization WHERE email = 'road@road.ru';
@@ -267,9 +285,9 @@ VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN
 CREATE TABLE voice_scheduler
 (
     application_id UUID PRIMARY KEY,
-    process_id VARCHAR(60) NOT NULL,
-    schedule_time   TIMESTAMP WITH TIME ZONE NOT NULL,
-    status VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
+    process_id     VARCHAR(60)              NOT NULL,
+    schedule_time  TIMESTAMP WITH TIME ZONE NOT NULL,
+    status         VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
     FOREIGN KEY (application_id) REFERENCES statement (statement_id)
 );
 

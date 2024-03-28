@@ -6,10 +6,8 @@ import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 
 @RequiredArgsConstructor
 public enum DefectStatus {
-    OPEN("OPEN"),
-    REJECTED("REJECTED"),
     IN_PROCESS("IN_PROCESS"),
-    WAIT_ACCEPT("WAIT_ACCEPT"),
+    REJECTED("REJECTED"),
     COMPLETED("COMPLETED"),
     ;
 

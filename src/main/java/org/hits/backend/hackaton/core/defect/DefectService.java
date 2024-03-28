@@ -12,6 +12,7 @@ import org.hits.backend.hackaton.public_interface.defect.UpdateDefectDto;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.file.UploadFileDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,12 +28,19 @@ public class DefectService {
     private final DefectPhotoRepository defectPhotoRepository;
 
     public UUID createDefect(CreateDefectDto dto) {
+        var statement = defectRepository.getDefectById(dto.statementId())
+                .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
+
+        if (!statement.status().status.equals(StatementStatus.OPEN.status)) {
+            throw new ExceptionInApplication("Statement is not open", ExceptionType.INVALID);
+        }
+
         var defect = new DefectEntity(
                 null,
                 dto.statementId(),
                 dto.longitude(),
                 dto.latitude(),
-                DefectStatus.OPEN,
+                DefectStatus.IN_PROCESS,
                 dto.defectTypeId(),
                 dto.address(),
                 OffsetDateTime.now(),

@@ -3,6 +3,8 @@ package org.hits.backend.hackaton.core.executors.service;
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.core.executors.repository.ExecutorRepository;
 import org.hits.backend.hackaton.core.executors.repository.entity.ExecutorEntity;
+import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
+import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -12,8 +14,12 @@ import java.util.UUID;
 public class ExecutorService {
     private final ExecutorRepository executorRepository;
 
-    public ExecutorEntity assignExecutor(UUID statementId, UUID userId) {
+    public void assignExecutor(UUID statementId, UUID userId) {
+        if (executorRepository.existsByStatementIdAndExecutorId(statementId, userId)) {
+            throw new ExceptionInApplication("Executor already assigned", ExceptionType.INVALID);
+        }
+
         var entity = new ExecutorEntity(userId, statementId);
-        return executorRepository.save(entity);
+        executorRepository.save(entity);
     }
 }
