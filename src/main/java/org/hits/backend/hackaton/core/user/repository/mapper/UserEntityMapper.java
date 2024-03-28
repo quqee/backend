@@ -9,12 +9,12 @@ public class UserEntityMapper implements RecordMapper<UsersRecord, UserEntity> {
     public UserEntity map(UsersRecord record) {
         return new UserEntity(
                 record.getUserId(),
+                record.getOrganizationId(),
                 record.getUsername(),
                 record.getPassword(),
                 record.getEmail(),
                 record.getFullName(),
-                record.getOnlineStatus(),
-                record.getOrganizationId()
+                record.getOnlineStatus()
         );
     }
 }

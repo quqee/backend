@@ -58,4 +58,11 @@ public class StatementRepositoryImpl implements StatementRepository {
                 .fetchOptional(STATEMENT_ENTITY_MAPPER);
     }
 
+    @Override
+    public void deleteStatement(UUID statementId) {
+        create.deleteFrom(STATEMENT)
+                .where(STATEMENT.STATEMENT_ID.eq(statementId))
+                .execute();
+    }
+
 }

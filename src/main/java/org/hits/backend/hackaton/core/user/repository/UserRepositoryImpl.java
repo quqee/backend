@@ -63,6 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
         var user = create.insertInto(USERS)
                 .set(USERS.USERNAME, entity.username())
                 .set(USERS.EMAIL, entity.email())
+                .set(USERS.ORGANIZATION_ID, entity.organizationId())
                 .set(USERS.PASSWORD, entity.password())
                 .set(USERS.FULL_NAME, entity.fullName())
                 .set(USERS.ONLINE_STATUS, entity.onlineStatus())
@@ -104,5 +105,19 @@ public class UserRepositoryImpl implements UserRepository {
 
         return query.where(condition)
                 .fetch(USER_ENTITY_MAPPER);
+    }
+
+    @Override
+    public List<UserEntity> findAllEmployees(UUID organizationId) {
+        return create.selectFrom(USERS)
+                .where(USERS.ORGANIZATION_ID.eq(organizationId))
+                .fetch(USER_ENTITY_MAPPER);
+    }
+
+    @Override
+    public void deleteUser(UUID userId) {
+        create.deleteFrom(USERS)
+                .where(USERS.USER_ID.eq(userId))
+                .execute();
     }
 }

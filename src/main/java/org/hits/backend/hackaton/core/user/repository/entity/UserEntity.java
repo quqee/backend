@@ -7,11 +7,11 @@ import java.util.UUID;
 @Builder
 public record UserEntity(
         UUID id,
+        UUID organizationId,
         String username,
         String password,
         String email,
         String fullName,
-        boolean onlineStatus,
-        UUID organizationId
+        boolean onlineStatus
 ) {
 }

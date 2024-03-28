@@ -16,4 +16,6 @@ public interface UserRepository {
     UserEntity createUser(UserEntity entity, List<UserAuthoritiesEnum> authorities);
     UserEntity updateUser(UserEntity entity);
     List<UserEntity> findConnectedUsers(Boolean onlineStatus);
+    List<UserEntity> findAllEmployees(UUID organizationId);
+    void deleteUser(UUID userId);
 }

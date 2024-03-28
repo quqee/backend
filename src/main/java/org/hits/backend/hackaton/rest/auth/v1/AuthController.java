@@ -19,18 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
-    public JwtResponse signUp(@RequestBody @Valid CreateUserRequest request) {
-        var dto = new CreateUserDto(
-                request.username(),
-                request.password(),
-                request.email(),
-                request.fullName(),
-                request.organizationId()
-        );
-        return authenticationService.signUp(dto);
-    }
-
     @PostMapping("/login")
     public JwtResponse signIn(@RequestBody @Valid LoginRequest request) {
         var dto = new LoginDto(

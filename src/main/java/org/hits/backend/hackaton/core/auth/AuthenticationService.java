@@ -25,11 +25,6 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
 
-    public JwtResponse signUp(@NonNull CreateUserDto dto) {
-        userService.createUser(dto);
-        return signIn(new LoginDto(dto.email(), dto.password()));
-    }
-
     public JwtResponse signIn(@NonNull LoginDto dto) {
         UserEntity user = userRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new ExceptionInApplication("Invalid email or password", ExceptionType.UNAUTHORIZED));

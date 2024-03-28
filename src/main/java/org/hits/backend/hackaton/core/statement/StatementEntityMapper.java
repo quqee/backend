@@ -1,6 +1,7 @@
 package org.hits.backend.hackaton.core.statement;
 
 import com.example.hackathon.public_.tables.records.StatementRecord;
+import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
 import org.jooq.RecordMapper;
 
 public class StatementEntityMapper implements RecordMapper<StatementRecord, StatementEntity> {

@@ -1,14 +1,19 @@
 package org.hits.backend.hackaton.core.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hits.backend.hackaton.core.user.repository.UserAuthoritiesRepository;
 import org.hits.backend.hackaton.core.user.repository.UserRepository;
+import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEntity;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
+import org.hits.backend.hackaton.public_interface.common.PageResponse;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.user.CreateUserDto;
 import org.hits.backend.hackaton.public_interface.user.UserDto;
+import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
 import org.hits.backend.hackaton.rest.user.v1.request.UpdateUserProfileRequest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,26 +24,35 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserAuthoritiesRepository userAuthoritiesRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public void createUser(CreateUserDto createUserDto) {
+    public UserEntity createUser(CreateUserDto createUserDto) {
         checkIfUsernameExists(createUserDto.username());
         checkIfEmailExists(createUserDto.email());
 
         var userEntity = new UserEntity(
-                null,
+                UUID.randomUUID(),
+                createUserDto.organizationId(),
                 createUserDto.username(),
                 passwordEncoder.encode(createUserDto.password()),
                 createUserDto.email(),
                 createUserDto.fullName(),
-                false,
-                createUserDto.organizationId()
+                false
         );
 
-        var fullUserEntity = userRepository.createUser(userEntity, List.of(UserAuthoritiesEnum.DEFAULT));
+        return userRepository.createUser(userEntity, List.of(UserAuthoritiesEnum.DEFAULT));
+    }
 
-        mapEntityToDto(fullUserEntity);
+    public void deleteUser(UUID userId) {
+        userAuthoritiesRepository.deleteByUserId(userId);
+        userRepository.deleteUser(userId);
+    }
+
+    public UserEntity findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ExceptionInApplication("User not found", ExceptionType.NOT_FOUND));
     }
 
     public List<UserDto> findConnectedUsers(Boolean onlineStatus) {
@@ -62,15 +76,19 @@ public class UserService {
 
         var updatedUserEntity = new UserEntity(
                 user.id(),
+                user.organizationId(),
                 user.username(),
                 user.password(),
                 user.email(),
                 user.fullName(),
-                status,
-                user.organizationId()
+                status
         );
 
         return mapEntityToDto(userRepository.updateUser(updatedUserEntity));
+    }
+
+    public List<UserAuthoritiesEntity> findAuthoritiesByUserId(UUID userId) {
+        return userRepository.findAuthoritiesByUserId(userId);
     }
 
     public UserDto getMyProfile(UUID id) {
@@ -79,18 +97,31 @@ public class UserService {
         return mapEntityToDto(userEntity);
     }
 
+    public List<EmployeeDto> getAllEmployees(UUID organizationId) {
+        var employeesEntity = userRepository.findAllEmployees(organizationId);
+
+        return employeesEntity.stream()
+                .map(entity -> EmployeeDto.builder()
+                        .user_id(entity.id())
+                        .username(entity.username())
+                        .fullName(entity.fullName())
+                        .email(entity.email())
+                        .build())
+                .toList();
+    }
+
     public UserDto updateMyProfile(UUID id, UpdateUserProfileRequest request) {
         var userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new ExceptionInApplication("User not found", ExceptionType.NOT_FOUND));
 
         var updatedUserEntity = new UserEntity(
                 userEntity.id(),
+                userEntity.organizationId(),
                 userEntity.username(),
                 userEntity.password(),
                 request.email(),
                 request.fullName(),
-                false,
-                userEntity.organizationId()
+                false
         );
 
         var fullUserEntity = userRepository.updateUser(updatedUserEntity);
