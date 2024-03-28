@@ -8,9 +8,11 @@ import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.public_interface.defect.DefectSmallDto;
 import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementSmallDto;
 import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
 import org.hits.backend.hackaton.rest.statement.v1.response.DefectSmallResponse;
 import org.hits.backend.hackaton.rest.statement.v1.response.StatementFullResponse;
+import org.hits.backend.hackaton.rest.statement.v1.response.StatementSmallResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -94,6 +97,16 @@ public class StatementController {
         return ResponseEntity.ok(mapToResponse(response));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<StatementSmallResponse>> getMyStatements(@AuthenticationPrincipal UserEntity userEntity) {
+        var response = statementService.getMyStatements(userEntity)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{statementId}")
     public ResponseEntity<Void> deleteStatement(@PathVariable UUID statementId) {
         statementService.deleteStatement(statementId);
@@ -124,6 +137,23 @@ public class StatementController {
                 dto.type().name(),
                 dto.status().name(),
                 dto.description()
+        );
+    }
+
+    private StatementSmallResponse mapToResponse(StatementSmallDto dto) {
+        return new StatementSmallResponse(
+                dto.statementId(),
+                dto.areaName(),
+                dto.length(),
+                dto.roadType().name(),
+                dto.surfaceType().name(),
+                dto.direction(),
+                dto.deadline(),
+                dto.createTime(),
+                dto.description(),
+                dto.statementStatus().name(),
+                dto.organizationPerformerId(),
+                dto.organizationCreatorId()
         );
     }
 }

@@ -6,8 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static com.example.hackathon.public_.tables.Statement.STATEMENT;
+import static com.example.hackathon.public_.tables.Executor.EXECUTOR;
 
 @Repository
 @RequiredArgsConstructor
@@ -63,6 +65,35 @@ public class StatementRepositoryImpl implements StatementRepository {
         create.deleteFrom(STATEMENT)
                 .where(STATEMENT.STATEMENT_ID.eq(statementId))
                 .execute();
+    }
+
+    @Override
+    public Stream<StatementEntity> getStatementsByOrganizationId(UUID organizationId) {
+        return create.selectFrom(STATEMENT)
+                .where(STATEMENT.ORGANIZATION_CREATOR_ID.eq(organizationId))
+                .or(STATEMENT.ORGANIZATION_PERFORMER_ID.eq(organizationId))
+                .fetchStream()
+                .map(STATEMENT_ENTITY_MAPPER);
+    }
+
+    @Override
+    public Stream<StatementEntity> getStatementsByExecutorId(UUID executorId) {
+        return create.select(STATEMENT.fields())
+                .from(STATEMENT)
+                .join(EXECUTOR)
+                .on(STATEMENT.STATEMENT_ID.eq(EXECUTOR.STATEMENT_ID))
+                .and(EXECUTOR.USER_ID.eq(executorId))
+                .fetchStream()
+                .map(row -> STATEMENT_ENTITY_MAPPER.map(row.into(STATEMENT)));
+    }
+
+    @Override
+    public Stream<StatementEntity> getAssigmentsByOrganizationId(UUID organizationId) {
+        return create.selectFrom(STATEMENT)
+                .where(STATEMENT.ORGANIZATION_CREATOR_ID.eq(organizationId))
+                .and(STATEMENT.ORGANIZATION_PERFORMER_ID.isNull())
+                .fetchStream()
+                .map(STATEMENT_ENTITY_MAPPER);
     }
 
 }
