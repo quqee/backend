@@ -57,13 +57,14 @@ CREATE TABLE statement
     create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
     area_name                 VARCHAR(255)             NOT NULL,
     length                    DOUBLE PRECISION         NOT NULL,
-    road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('АВТОМАГИСТРАЛЬ', 'СКОРОСТНАЯ_ДОРОГА', 'ОБЫЧНАЯ_ДОРОГА') ),
+    road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('HIGHWAY', 'EXPRESSWAY', 'ROAD') ),
     surface_type              VARCHAR(255)             NOT NULL CHECK ( surface_type IN
-                                                                        ('АСФАЛЬТ', 'БРУСЧАТКА', 'ЩЕБЕНЬ', 'ГРУНТ',
-                                                                         'ПЕСОК',
-                                                                         'БРУСЧАТКА', 'БЕТОН', 'ЖЕЛЕЗОБЕТОН',
-                                                                         'КОМБИНИРОВАННОЕ',
-                                                                         'ДРУГОЕ') ),
+                                                                        ('ASPHALT', 'COBBLESTONE', 'CRUSHED_STONE', 'GROUND',
+                                                                         'SAND',
+                                                                         'CONCRETE', 'REINFORCED_CONCRETE', 'COMBINED',
+                                                                         'OTHER') ),
+    statement_status VARCHAR(50) CHECK ( statement_status IN
+                                           ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
     direction                 VARCHAR(255),
     deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
     description               VARCHAR(255),
@@ -269,7 +270,7 @@ CREATE TABLE voice_scheduler
     process_id VARCHAR(60) NOT NULL,
     schedule_time   TIMESTAMP WITH TIME ZONE NOT NULL,
     status VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
-    FOREIGN KEY (application_id) REFERENCES application (application_id)
+    FOREIGN KEY (application_id) REFERENCES statement (statement_id)
 );
 
 -- rollback DROP TABLE voice_scheduler;
