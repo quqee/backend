@@ -14,46 +14,6 @@ tags:
   - name: user
     description: Операции с пользователем
 paths:
-  /auth/register:
-    post:
-      tags:
-        - auth
-      summary: Регистрация пользователя
-      description: Выполняя этот запрос вы получите access и refresh токены
-      operationId: registration
-      requestBody:
-        description: Created user object
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-      responses:
-        '200':
-          description: Успешная регистрация
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JwtResponse'
-        '400':
-          description: Ошибка при валидации даннных
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '409':
-          description: Пользователь уже существует (email или username не уникальный)
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: User already exists
   /auth/login:
     post:
       tags:
@@ -126,6 +86,362 @@ paths:
           description: Успешно
         '401':
           description: Невалидный токен
+
+
+  /defects:
+    post:
+      tags:
+        - defect
+      summary: Создать заявку с дефектом
+      description: Фотограф отправляет снимки с дефектами
+      operationId: createDefect()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDefectRequest'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Информация о заявке.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefectResponseDto'
+        '403':
+          description: Ошибка при авторизации
+    put:
+      tags:
+        - defect
+      summary: Обновить заявку с дефектом
+      description: Фотограф обновляет снимки с дефектами полотна
+      operationId: updateDefect()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDefectRequest'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Информация о заявке
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefectResponseDto'
+        '403':
+          description: Ошибка при авторизации
+  /defects/{applicationId}:
+    get:
+      tags:
+        - defect
+      summary: Получить информацию о заявке
+      operationId: getDefect()
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: applicationId
+          in: path
+          description: ID заявки, который нужно получить.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о заявке.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefectResponseDto'
+        '403':
+          description: Ошибка при авторизации
+
+  /statements:
+    post:
+      tags:
+        - statement
+      summary: Создать ведомость с дефектами
+      description: Заказчик создает ведомость
+      operationId: createStatement()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStatementRequest'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  nullable: false
+      responses:
+        '200':
+          description: Созданная ведомость.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
+    put:
+      tags:
+        - statement
+      summary: Обновить ведомость с дефектами
+      description: Заказчик обновляет ведомость
+      operationId: updateStatement()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatementRequest'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Обновить ведомость.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
+
+
+  /statements/{statementId}:
+    get:
+      tags:
+        - statement
+      summary: Получить информацию о ведомости
+      operationId: getStatement()
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: statementId
+          in: path
+          description: ID отправителя, сообщения которого нужно получить.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация о ведомости.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
+    delete:
+      tags:
+        - statement
+      summary: Удалить ведомость
+      operationId: deleteStatement()
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: statementId
+          in: path
+          description: ID ведомости, которую нужно удалить.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Ошибка при авторизации
+
+  /statements/my:
+    get:
+      tags:
+        - statement
+      summary: Получить мои ведомости
+      operationId: getMyStatements()
+      security:
+        - auth-bearer: []
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStatementDtoResult'
+        '403':
+          description: Ошибка при авторизации
+
+  /statements/employee:
+    post:
+      tags:
+        - statement
+      summary: Назначить на ведомость сотрудника организации
+      operationId: addEmployee()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentEmployee'
+      responses:
+        '200':
+          description: Информация о ведомости.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
+
+
+  /organizations:
+    post:
+      tags:
+        - organization
+      summary: Добавить работника
+      description: Работодатель добавляет сотрудника в свою организацию
+      operationId: createEmployee()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEmployeeRequest'
+      responses:
+        '200':
+          description: Сотрудник успешно назначен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDto'
+        '403':
+          description: Ошибка при авторизации
+    put:
+      tags:
+        - organization
+      summary: Обновить профиль работника
+      description: Работодатель обновляет профиль работника
+      operationId: updateEmployee()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEmployeeDto'
+      responses:
+        '200':
+          description: Профиль сотрудника
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDto'
+        '403':
+          description: Ошибка при авторизации
+
+  /organizations/employee/all:
+    get:
+      tags:
+        - organization
+      summary: "Получить всех работников организации"
+      operationId: getAllEmployee()
+      security:
+        - auth-bearer: []
+      responses:
+        '200':
+          description: Список работников
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEmployeeDtoResult'
+        '403':
+          description: Ошибка при авторизации
+
+  /organizations/{employeeId}:
+    get:
+      tags:
+        - organization
+      summary: "Получить профиль работника"
+      description: ""
+      operationId: getEmployee()
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: employeeId
+          in: path
+          description: ID работника, которого нужно получить.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDto'
+        '403':
+          description: Ошибка при авторизации
+    delete:
+      tags:
+        - organization
+      summary: Удалить работника
+      description: ""
+      operationId: deleteEmployee()
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: employeeId
+          in: path
+          description: ID работника, которого нужно удалить.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Ошибка при авторизации
+
+
   /users/my/profile:
     get:
       tags:
@@ -172,7 +488,7 @@ paths:
     get:
       tags:
         - user
-      summary: Получить пользователей
+      summary: Получить пользователей (для чата)
       description: ''
       operationId: getUsers
       security:
@@ -236,17 +552,6 @@ paths:
         '403':
           description: Ошибка при авторизации
 
-  /defects:
-    post:
-      tags:
-        - defect
-      summary: Отправить заявку в дефектом
-      operationId: createApplication()
-      security:
-        - auth-bearer: []
-      requestBody:
-      responses:
-
   /app/chat:
     post:
       tags:
@@ -302,30 +607,6 @@ paths:
 
 components:
   schemas:
-    CreateUserRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          example: John007
-          minLength: 3
-          maxLength: 50
-          nullable: false
-        full_name:
-          type: string
-          example: John
-          nullable: false
-        email:
-          type: string
-          example: john@email.com
-          nullable: false
-        password:
-          type: string
-          example: '12345'
-          minLength: 5
-          maxLength: 50
-          nullable: false
-
     UpdateUserProfileRequest:
       type: object
       properties:
@@ -337,6 +618,288 @@ components:
           type: string
           example: john@gmail.com
           nullable: false
+
+    AddEmployeeRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john
+          nullable: false
+        full_name:
+          type: string
+          example: John Statehon
+          nullable: false
+        email:
+          type: string
+          example: john@gmail.com
+          nullable: false
+        password:
+          type: string
+          example: 12345
+          nullable: false
+    UpdateEmployeeDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john
+        full_name:
+          type: string
+          example: John Statehon
+        email:
+          type: string
+          example: john@gmail.com
+        password:
+          type: string
+          example: 12345
+
+    EmployeeDto:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          example: john
+          nullable: false
+        full_name:
+          type: string
+          example: John Statehon
+          nullable: false
+        email:
+          type: string
+          example: john@gmail.com
+          nullable: false
+
+    CreateDefectRequest:
+      type: object
+      properties:
+        longitude:
+          type: number
+          format: double
+          nullable: false
+        latitude:
+          type: number
+          format: double
+          nullable: false
+        defect_status:
+          type: string
+          example: Поперечная трещина
+          nullable: false
+        defect_distance:
+          type: number
+          format: double
+          nullable: false
+
+    UpdateDefectRequest:
+      type: object
+      properties:
+        defect_id:
+          type: string
+          format: uuid
+          nullable: false
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        defect_status:
+          type: string
+          example: Поперечная трещина
+        defect_distance:
+          type: number
+          format: double
+
+    DefectResponseDto:
+      type: object
+      properties:
+        defect_id:
+          type: string
+          format: uuid
+        longitude:
+          type: number
+          format: double
+          nullable: false
+        latitude:
+          type: number
+          format: double
+          nullable: false
+        defect_status:
+          type: string
+          example: Поперечная трещина
+          nullable: false
+        defect_distance:
+          type: number
+          format: double
+          nullable: false
+        create_time:
+          type: string
+          format: date-time
+          example: '2025-07-21T17:32:28Z'
+          nullable: false
+        application_status:
+          type: string
+          format: string
+          example: OPEN
+
+    CreateStatementRequest:
+      type: object
+      properties:
+        area_name:
+          type: string
+          example: Магистраль Москва-Казань
+        length:
+          type: number
+          format: double
+        road_type:
+          type: string
+          example: HIGHWAY
+        surface_type:
+          type: string
+          example: ASPHALT
+        direction:
+          type: string
+          nullable: false
+        deadline:
+          type: string
+          format: date-time
+          example: '2025-07-21T17:32:28Z'
+          nullable: false
+        defects:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateStatementRequest:
+      type: object
+      properties:
+        area_name:
+          type: string
+          example: Магистраль Москва-Казань
+        length:
+          type: number
+          format: double
+        road_type:
+          type: string
+          example: HIGHWAY
+        surface_type:
+          type: string
+          example: ASPHALT
+        direction:
+          type: string
+          nullable: false
+        deadline:
+          type: string
+          format: date-time
+          example: '2025-07-21T17:32:28Z'
+          nullable: false
+        statement_status:
+          type: string
+          example: IN_PROCESS
+        organization_performer_id:
+          type: string
+          format: uuid
+        defects:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    AssignmentEmployee:
+      type: object
+      properties:
+        statement_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+
+    StatementResponseDto:
+      type: object
+      properties:
+        statement_id:
+          type: string
+          format: uuid
+        area_name:
+          type: string
+          example: Магистраль Москва-Казань
+        length:
+          type: number
+          format: double
+        road_type:
+          type: string
+          example: HIGHWAY
+        surface_type:
+          type: string
+          example: ASPHALT
+        direction:
+          type: string
+          nullable: false
+        deadline:
+          type: string
+          format: date-time
+          example: '2025-07-21T17:32:28Z'
+          nullable: false
+        create_time:
+          type: string
+          format: date-time
+          example: '2024-07-21T17:32:28Z'
+          nullable: false
+        description:
+          type: string
+          example: Большие ямы на дорогах
+        statement_status:
+          type: string
+          example: REJECTED
+        organization_performer_id:
+          type: string
+          format: uuid
+        organization_creator_id:
+          type: string
+          format: uuid
+          nullable: false
+        defects:
+          type: array
+          items:
+            type: string
+            format: uuid
+        performer_users:
+          type: array
+          items:
+            type: string
+            format: uuid
+        fixative_users:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    PaginatedStatementDtoResult:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/StatementResponseDto'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      required:
+        - content
+        - metadata
+
+    PaginatedEmployeeDtoResult:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/EmployeeDto'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      required:
+        - content
+        - metadata
 
     PaginatedMessageDtoResult:
       type: object

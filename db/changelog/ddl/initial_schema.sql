@@ -54,6 +54,8 @@ CREATE TABLE statement
     statement_id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     organization_creator_id   UUID                     NOT NULL,
     organization_performer_id UUID,
+    statement_status          VARCHAR(50)              NOT NULL CHECK ( statement_status IN
+                                                                    ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
     create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
     area_name                 VARCHAR(255)             NOT NULL,
     length                    DOUBLE PRECISION         NOT NULL,
