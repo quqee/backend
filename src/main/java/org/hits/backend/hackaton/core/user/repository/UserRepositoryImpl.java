@@ -6,10 +6,12 @@ import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.core.user.repository.mapper.UserAuthoritiesEntityMapper;
 import org.hits.backend.hackaton.core.user.repository.mapper.UserEntityMapper;
+import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStepN;
 import org.jooq.impl.DSL;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
         var user = create.insertInto(USERS)
                 .set(USERS.USERNAME, entity.username())
                 .set(USERS.EMAIL, entity.email())
+                .set(USERS.ORGANIZATION_ID, entity.organizationId())
                 .set(USERS.PASSWORD, entity.password())
                 .set(USERS.FULL_NAME, entity.fullName())
                 .set(USERS.ONLINE_STATUS, entity.onlineStatus())
@@ -104,5 +107,22 @@ public class UserRepositoryImpl implements UserRepository {
 
         return query.where(condition)
                 .fetch(USER_ENTITY_MAPPER);
+    }
+
+    @Override
+    public List<UserEntity> findAllEmployees(UUID organizationId, PageRequest pageable) {
+        var offset = pageable.getPageNumber() * pageable.getPageSize();
+        var limit = pageable.getPageSize();
+
+        return create.selectFrom(USERS)
+                .where(USERS.ORGANIZATION_ID.eq(organizationId))
+                .limit(limit)
+                .offset(offset)
+                .fetch(USER_ENTITY_MAPPER);
+    }
+
+    @Override
+    public int countAllEmployees(UUID organizationId) {
+        return create.fetchCount(USERS, USERS.ORGANIZATION_ID.eq(organizationId));
     }
 }

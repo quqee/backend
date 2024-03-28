@@ -55,24 +55,22 @@ CREATE TABLE statement
     organization_creator_id   UUID                     NOT NULL,
     organization_performer_id UUID,
     statement_status          VARCHAR(50)              NOT NULL CHECK ( statement_status IN
-                                                                    ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
+                                                                        ('OPEN', 'REJECTED', 'IN_PROCESS', 'WAIT_ACCEPT', 'COMPLETED') ),
     create_time               TIMESTAMP WITH TIME ZONE NOT NULL,
     area_name                 VARCHAR(255)             NOT NULL,
     length                    DOUBLE PRECISION         NOT NULL,
-    road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('АВТОМАГИСТРАЛЬ', 'СКОРОСТНАЯ_ДОРОГА', 'ОБЫЧНАЯ_ДОРОГА') ),
+    road_type                 VARCHAR(255)             NOT NULL CHECK ( road_type IN ('HIGHWAY', 'EXPRESSWAY', 'ROAD') ),
     surface_type              VARCHAR(255)             NOT NULL CHECK ( surface_type IN
-                                                                        ('АСФАЛЬТ', 'БРУСЧАТКА', 'ЩЕБЕНЬ', 'ГРУНТ',
-                                                                         'ПЕСОК',
-                                                                         'БРУСЧАТКА', 'БЕТОН', 'ЖЕЛЕЗОБЕТОН',
-                                                                         'КОМБИНИРОВАННОЕ',
-                                                                         'ДРУГОЕ') ),
+                                                                        ('ASPHALT', 'COBBLESTONE', 'CRUSHED_STONE', 'GROUND',
+                                                                         'SAND',
+                                                                         'CONCRETE', 'REINFORCED_CONCRETE', 'COMBINED',
+                                                                         'OTHER') ),
     direction                 VARCHAR(255),
     deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
     description               VARCHAR(255),
     FOREIGN KEY (organization_creator_id) REFERENCES organization (organization_id),
     FOREIGN KEY (organization_performer_id) REFERENCES organization (organization_id)
 );
-
 
 -- rollback DROP TABLE statement;
 
@@ -258,7 +256,20 @@ VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru')
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN');
 
-
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM user WHERE username = 'admin';
 -- rollback DELETE FROM organization WHERE email = 'road@road.ru';
+
+
+-- changeset gordey_dovydenko:14
+
+CREATE TABLE voice_scheduler
+(
+    application_id UUID PRIMARY KEY,
+    process_id VARCHAR(60) NOT NULL,
+    schedule_time   TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
+    FOREIGN KEY (application_id) REFERENCES statement (statement_id)
+);
+
+-- rollback DROP TABLE voice_scheduler;

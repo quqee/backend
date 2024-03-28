@@ -3,6 +3,8 @@ package org.hits.backend.hackaton.core.user.repository;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEntity;
 import org.hits.backend.hackaton.core.user.repository.entity.UserAuthoritiesEnum;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
+import org.hits.backend.hackaton.rest.organization.v1.response.EmployeeDto;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +18,6 @@ public interface UserRepository {
     UserEntity createUser(UserEntity entity, List<UserAuthoritiesEnum> authorities);
     UserEntity updateUser(UserEntity entity);
     List<UserEntity> findConnectedUsers(Boolean onlineStatus);
+    List<UserEntity> findAllEmployees(UUID organizationId, PageRequest pageable);
+    int countAllEmployees(UUID organizationId);
 }
