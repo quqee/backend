@@ -232,12 +232,12 @@ paths:
       security:
         - auth-bearer: [ ]
       parameters:
-        - name: status
-          in: path
+        - in: query
+          name: status
           description: Статус ведомости
-          required: false
           schema:
             type: string
+          required: false
       responses:
         '200':
           description: Созданная ведомость.
@@ -279,7 +279,7 @@ paths:
       tags:
         - statement
       summary: Получить информацию о ведомости
-      operationId: getStatement()
+      operationId: getStatementById()
       security:
         - auth-bearer: []
       parameters:
