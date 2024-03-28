@@ -110,8 +110,8 @@ public class StatementService {
                 dto.surfaceType(),
                 dto.direction(),
                 dto.deadline(),
-                oldEntity.description(),
-                oldEntity.status()
+                null,
+                dto.status()
         );
 
         var fileMetadata = new FileMetadata(

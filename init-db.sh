@@ -2,6 +2,7 @@
 
 set -e
 set -u
+echo "$POSTGRES_USER"
 function create_user_and_database() {
 	local database=$1
 	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL

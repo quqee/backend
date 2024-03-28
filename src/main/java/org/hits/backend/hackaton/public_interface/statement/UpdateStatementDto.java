@@ -17,6 +17,7 @@ public record UpdateStatementDto(
         OffsetDateTime deadline,
         UUID organizationCreatorId,
         UUID statementId,
-        UUID organizationPerformerId
+        UUID organizationPerformerId,
+        StatementStatus status
 ) {
 }

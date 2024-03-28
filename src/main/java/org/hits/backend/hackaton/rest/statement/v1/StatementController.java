@@ -10,6 +10,7 @@ import org.hits.backend.hackaton.public_interface.statement.AssignmentEmployee;
 import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
 import org.hits.backend.hackaton.public_interface.statement.StatementSmallDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
 import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
 import org.hits.backend.hackaton.rest.statement.v1.response.DefectSmallResponse;
 import org.hits.backend.hackaton.rest.statement.v1.response.StatementFullResponse;
@@ -65,7 +66,8 @@ public class StatementController {
             @RequestParam String direction,
             @RequestParam OffsetDateTime deadline,
             @RequestParam("statement_id") UUID statementId,
-            @RequestParam("organization_performer_id") UUID organizationPerformerId,
+            @RequestParam(value = "organization_performer_id", required = false) UUID organizationPerformerId,
+            @RequestParam("status") String status,
             @AuthenticationPrincipal UserEntity userEntity
     ) {
         var updatedStatementDto = new UpdateStatementDto(
@@ -78,7 +80,8 @@ public class StatementController {
                 deadline,
                 userEntity.organizationId(),
                 statementId,
-                organizationPerformerId
+                organizationPerformerId,
+                StatementStatus.getStatusByName(status)
         );
 
         var updatedStatement = mapToResponse(statementService.updateStatement(updatedStatementDto));

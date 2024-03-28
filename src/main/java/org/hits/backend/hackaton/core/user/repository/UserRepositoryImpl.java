@@ -89,7 +89,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .set(USERS.FULL_NAME, entity.fullName())
                 .set(USERS.ONLINE_STATUS, entity.onlineStatus())
                 .where(USERS.USER_ID.eq(entity.id()))
-                .returning(USERS.USER_ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS)
+                .returning(USERS.USER_ID, USERS.USERNAME, USERS.EMAIL, USERS.PASSWORD, USERS.FULL_NAME, USERS.ONLINE_STATUS, USERS.ORGANIZATION_ID)
                 .fetchOne(USER_ENTITY_MAPPER);
     }
 
