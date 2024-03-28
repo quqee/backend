@@ -8,7 +8,7 @@ CREATE
 
 CREATE TABLE organization
 (
-    organization_id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id   UUID PRIMARY KEY,
     name              VARCHAR(100) NOT NULL,
     address           VARCHAR(255) NOT NULL,
     phone_number      VARCHAR(20)  NOT NULL UNIQUE,
@@ -210,49 +210,36 @@ VALUES ('Стирание краски', TRUE),
 
 -- changeset gordey_dovydenko:13
 
-INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Дорожное агентство"', 'г. Пермь, ул. Ленина, д. 1', '+7 (495) 123-45-67', 'agency1@agency.ru',
+INSERT INTO organization (organization_id, name, address, phone_number, email, organization_type)
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'ООО "Лучшее качество"', 'г. Пермь, ул. Ленина, д. 3', '+7 (495) 123-45-67', 'organization@agency.ru',
         'PERFORMER');
 
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'), 'agency1', 'bussiness1@gmail.com',
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'agency1', 'bussiness1@gmail.com',
         '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'agency1', FALSE);
 
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'bussiness1@gmail.com'), 'ROLE_ADMIN');
 
 
-
-INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Лучшее качество"', 'г. Пермь, ул. Ленина, д. 3', '+7 (495) 123-45-66', 'agency2@agency.ru', 'PERFORMER');
-
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'agency2@agency.ru'), 'agency2', 'bussiness2@gmail.com',
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'agency2', 'bussiness2@gmail.com',
         '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'agency2', FALSE);
 
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'bussiness2@gmail.com'), 'ROLE_ADMIN');
 
 
-
-INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('Министерство транспорта', 'г. Пермь, ул. Ленина, д. 2', '+7 (495) 123-45-68', 'road1@perm.ru', 'CUSTOMER');
-
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'petr_ivanov', 'perm1@yandex.ru',
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'petr_ivanov', 'perm1@yandex.ru',
         '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'Petr Ivanov', FALSE);
 
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'perm1@yandex.ru'), 'ROLE_ADMIN');
 
 
-
-INSERT INTO organization (name, address, phone_number, email, organization_type)
-VALUES ('ООО "Министерство улучшения инфраструктуры"', 'г. Пермь, ул. Ленина, д. 4', '+7 (495) 123-45-60',
-        'road2@perm.ru', 'CUSTOMER');
-
 INSERT INTO users (organization_id, username, email, password, full_name, online_status)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru'), 'andrey_fedorov', 'perm2@yandex.ru',
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'andrey_fedorov', 'perm2@yandex.ru',
         '$2a$10$p/SE0M1upWg1Szb3eGLn0.t4lLC5hbOpmL.VuY0CpTQYmiP8kXG/W', 'Andrey Fedorov', FALSE);
 
 INSERT INTO user_authority (user_id, authorities)
@@ -261,18 +248,18 @@ VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN
 
 INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
                         direction, deadline, description, organization_performer_id)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'OPEN', '2024-06-01 12:00:00',
-        'ул. Ленина д. 1', 10, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', (SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'));
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'OPEN', '2024-06-01 12:00:00',
+        'ул. Ленина д. 1', 10, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', 'e58ed763-928c-4155-bee9-fdbaaadc15f3');
 
 INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
                         direction, deadline, description)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'IN_PROCESS', '2024-06-01 12:00:00',
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'IN_PROCESS', '2024-06-01 12:00:00',
         'пер. Буяновский 3а', 100, 'ROAD', 'GROUND', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги');
 
 INSERT INTO statement (organization_creator_id, statement_status, create_time, area_name, length, road_type, surface_type,
                         direction, deadline, description, organization_performer_id)
-VALUES ((SELECT organization_id FROM organization WHERE email = 'road1@perm.ru'), 'COMPLETED', '2024-06-01 12:00:00',
-        'пр-кт Победы 12', 44, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', (SELECT organization_id FROM organization WHERE email = 'agency1@agency.ru'));
+VALUES ('e58ed763-928c-4155-bee9-fdbaaadc15f3', 'COMPLETED', '2024-06-01 12:00:00',
+        'пр-кт Победы 12', 44, 'ROAD', 'ASPHALT', 'Север', '2025-06-01 12:00:00', 'Ремонт дороги', 'e58ed763-928c-4155-bee9-fdbaaadc15f3');
 
 
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');

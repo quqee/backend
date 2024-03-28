@@ -10,6 +10,7 @@ public interface StatementRepository {
     void updateStatement(StatementEntity entity);
     Optional<StatementEntity> getStatementById(UUID statementId);
     void deleteStatement(UUID statementId);
+    List<StatementEntity> getStatements(String statementStatus);
     Stream<StatementEntity> getStatementsByOrganizationId(UUID organizationId);
     Stream<StatementEntity> getStatementsByExecutorId(UUID executorId);
     Stream<StatementEntity> getAssigmentsByOrganizationId(UUID organizationId);

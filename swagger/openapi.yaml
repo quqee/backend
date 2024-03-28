@@ -223,6 +223,32 @@ paths:
                 $ref: '#/components/schemas/StatementResponseDto'
         '403':
           description: Ошибка при авторизации
+    get:
+      tags:
+        - statement
+      summary: Получить все ведомости
+      description: ""
+      operationId: getStatement()
+      security:
+        - auth-bearer: [ ]
+      parameters:
+        - name: status
+          in: path
+          description: Статус ведомости
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Созданная ведомость.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
     put:
       tags:
         - statement
