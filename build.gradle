@@ -54,6 +54,15 @@ dependencies {
     implementation libs.jsonwebtoken.jjwt.api
     runtimeOnly libs.jsonwebtoken.jjwt.impl
     runtimeOnly libs.jsonwebtoken.jjwt.jackson
+
+    implementation libs.amazon.bom
+    implementation libs.amazon.s3
+    implementation libs.amazon.netty.nio.client
+    implementation libs.amazon.s3control
+    implementation libs.amazon.s3.transfer.manager
+    implementation libs.amazon.apache.client
+
+    implementation libs.spring.client
 }
 
 tasks.named('test') {

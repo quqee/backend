@@ -1,5 +1,6 @@
 [versions]
 spring-boot = "3.2.3"
+awssdk = "2.25.17"
 
 [plugins]
 spring-plugin = { id = "org.springframework.boot", version.ref = "spring-boot" }
@@ -16,6 +17,7 @@ spring-web = { module = "org.springframework.boot:spring-boot-starter-web", vers
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis", version.ref = "spring-boot" }
 spring-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
+spring-client = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "spring-boot" }
 jackson-data-type = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.17.0" }
 
 #liquibase
@@ -43,3 +45,11 @@ nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version = "9.37.3" 
 jsonwebtoken-jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version = "0.12.5" }
 jsonwebtoken-jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version = "0.12.5" }
 jsonwebtoken-jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version = "0.12.5" }
+
+#s3 sdk
+amazon-bom = { module = "software.amazon.awssdk:bom", version.ref = "awssdk"}
+amazon-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awssdk"}
+amazon-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "awssdk"}
+amazon-s3control = { module = "software.amazon.awssdk:s3control", version.ref = "awssdk"}
+amazon-s3-transfer-manager = { module = "software.amazon.awssdk:s3-transfer-manager", version.ref = "awssdk"}
+amazon-apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "awssdk"}

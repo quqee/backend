@@ -256,7 +256,20 @@ VALUES ((SELECT organization_id FROM organization WHERE email = 'road2@perm.ru')
 INSERT INTO user_authority (user_id, authorities)
 VALUES ((SELECT user_id FROM users WHERE email = 'perm2@yandex.ru'), 'ROLE_ADMIN');
 
-
 -- rollback DELETE FROM user_authority WHERE user_id = (SELECT id FROM Users WHERE username = 'admin');
 -- rollback DELETE FROM user WHERE username = 'admin';
 -- rollback DELETE FROM organization WHERE email = 'road@road.ru';
+
+
+-- changeset gordey_dovydenko:14
+
+CREATE TABLE voice_scheduler
+(
+    application_id UUID PRIMARY KEY,
+    process_id VARCHAR(60) NOT NULL,
+    schedule_time   TIMESTAMP WITH TIME ZONE NOT NULL,
+    status VARCHAR(50) CHECK ( status IN ('IN_PROCESS', 'EXECUTED') ),
+    FOREIGN KEY (application_id) REFERENCES application (application_id)
+);
+
+-- rollback DROP TABLE voice_scheduler;
