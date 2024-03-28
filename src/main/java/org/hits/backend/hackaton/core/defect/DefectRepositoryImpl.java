@@ -38,13 +38,6 @@ public class DefectRepositoryImpl implements DefectRepository {
     }
 
     @Override
-    public List<String> getPhotosByDefectId(UUID defectId) {
-        return create.selectFrom(APPLICATION_AUDIO)
-                .where(APPLICATION_AUDIO.APPLICATION_ID.eq(defectId))
-                .fetch(APPLICATION_AUDIO.AUDIO_ID);
-    }
-
-    @Override
     public Optional<DefectEntity> getDefectById(UUID defectId) {
         return create.selectFrom(APPLICATION)
                 .where(APPLICATION.APPLICATION_ID.eq(defectId))

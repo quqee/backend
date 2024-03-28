@@ -5,6 +5,7 @@ import org.hits.backend.hackaton.core.defect.DefectService;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.public_interface.defect.CreateDefectDto;
 import org.hits.backend.hackaton.public_interface.defect.DefectFullDto;
+import org.hits.backend.hackaton.public_interface.defect.DefectStatus;
 import org.hits.backend.hackaton.public_interface.defect.UpdateDefectDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,6 +63,7 @@ public class DefectController {
             @RequestParam(value = "defect_distance", required = false) Double defectDistance,
             @RequestParam("statement_id") UUID statementId,
             @RequestParam("address") String address,
+            @RequestParam("defect_status") String defectStatus,
             @AuthenticationPrincipal UserEntity userEntity
     ) {
         var dto = new UpdateDefectDto(
@@ -74,7 +76,7 @@ public class DefectController {
                 userEntity.id(),
                 address,
                 defectId,
-                null
+                DefectStatus.getStatusByName(defectStatus)
         );
 
         defectService.updateDefect(dto);

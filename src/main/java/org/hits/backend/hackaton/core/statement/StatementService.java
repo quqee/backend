@@ -3,21 +3,28 @@ package org.hits.backend.hackaton.core.statement;
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.core.defect.DefectEntity;
 import org.hits.backend.hackaton.core.defect.DefectRepository;
-import org.hits.backend.hackaton.core.executors.service.ExecutorService;
 import org.hits.backend.hackaton.core.file.S3StorageService;
 import org.hits.backend.hackaton.core.file.FileMetadata;
 import org.hits.backend.hackaton.core.speech.SpeechService;
 import org.hits.backend.hackaton.core.user.repository.entity.UserEntity;
 import org.hits.backend.hackaton.core.user.service.UserService;
+import org.hits.backend.hackaton.core.executors.service.ExecutorService;
 import org.hits.backend.hackaton.public_interface.defect.DefectSmallDto;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.file.UploadFileDto;
 import org.hits.backend.hackaton.public_interface.statement.*;
+import org.hits.backend.hackaton.public_interface.statement.CreateStatementDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementSmallDto;
+import org.hits.backend.hackaton.public_interface.statement.StatementStatus;
+import org.hits.backend.hackaton.public_interface.statement.UpdateStatementDto;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -141,6 +148,17 @@ public class StatementService {
         );
     }
 
+    public List<StatementSmallDto> getMyStatements(UserEntity userEntity) {
+        var statements = Stream.concat(statementRepository.getStatementsByOrganizationId(userEntity.organizationId()),
+                statementRepository.getStatementsByExecutorId(userEntity.id()));
+
+        return  statements.map(this::mapToDto).toList();
+    }
+
+    public void deleteStatement(UUID statementId) {
+        statementRepository.deleteStatement(statementId);
+    }
+
     private DefectSmallDto mapToDto(DefectEntity entity) {
         var type = defectRepository.getDefectTypeById(entity.defectStatusId())
                 .orElseThrow(() -> new ExceptionInApplication("Defect type not found", ExceptionType.NOT_FOUND));
@@ -152,7 +170,20 @@ public class StatementService {
         );
     }
 
-    public void deleteStatement(UUID statementId) {
-        statementRepository.deleteStatement(statementId);
+    private StatementSmallDto mapToDto(StatementEntity entity) {
+        return new StatementSmallDto(
+                entity.statementId(),
+                entity.areaName(),
+                entity.length(),
+                entity.roadType(),
+                entity.surfaceType(),
+                entity.direction(),
+                entity.deadline(),
+                entity.creationDate(),
+                entity.description(),
+                entity.status(),
+                entity.organizationPerformerId(),
+                entity.organizationCreatorId()
+        );
     }
 }

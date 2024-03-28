@@ -9,7 +9,6 @@ import java.util.UUID;
 public interface DefectRepository {
     List<DefectEntity> getDefectsByStatementId(UUID statementId);
     Optional<DefectTypeDto> getDefectTypeById(int defectTypeId);
-    List<String> getPhotosByDefectId(UUID defectId);
     Optional<DefectEntity> getDefectById(UUID defectId);
     UUID createDefect(DefectEntity defect);
     void updateDefect(DefectEntity defect);
