@@ -55,4 +55,4 @@ amazon-s3-transfer-manager = { module = "software.amazon.awssdk:s3-transfer-mana
 amazon-apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "awssdk"}
 
 #email
-email-api = { module = "org.springframework.boot:spring-boot-starter-mai", version.ref = "spring-boot" }
+email-api = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
