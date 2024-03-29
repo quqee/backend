@@ -6,6 +6,8 @@ public record DefectSmallDto(
         UUID defectId,
         DefectStatus status,
         DefectTypeDto type,
-        String description
+        String description,
+        Double longitude,
+        Double latitude
 ) {
 }

@@ -12,6 +12,8 @@ public record DefectSmallResponse(
         @JsonProperty("status")
         String defectStatus,
         @JsonProperty("description")
-        String description
+        String description,
+        Double latitude,
+        Double longitude
 ) {
 }

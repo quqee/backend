@@ -56,7 +56,9 @@ public class AssigmentController {
                 dto.defectId(),
                 dto.type().name(),
                 dto.status().name(),
-                dto.description()
+                dto.description(),
+                dto.latitude(),
+                dto.longitude()
         );
     }
 }

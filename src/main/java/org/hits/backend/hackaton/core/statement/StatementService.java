@@ -163,7 +163,9 @@ public class StatementService {
                 entity.applicationId(),
                 entity.status(),
                 type,
-                entity.address()
+                entity.address(),
+                entity.longitude(),
+                entity.latitude()
         );
     }
 
