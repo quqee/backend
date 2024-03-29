@@ -1,6 +1,10 @@
 spring:
     application:
         name: test-task
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 1000MB
     mail:
         host: smtp.gmail.com
         port: 587
