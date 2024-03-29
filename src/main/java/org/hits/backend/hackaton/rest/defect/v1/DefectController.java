@@ -39,7 +39,7 @@ public class DefectController {
             @RequestParam("defect_type_id") Integer defectTypeId,
             @RequestParam(value = "defect_distance", required = false) Double defectDistance,
             @RequestParam("statement_id") UUID statementId,
-            @RequestParam("address") String address,
+            @RequestParam(value = "address", required = false) String address,
             @AuthenticationPrincipal UserEntity userEntity) {
         var dto = new CreateDefectDto(
                 longitude,
@@ -64,7 +64,7 @@ public class DefectController {
             @RequestParam("defect_type_id") Integer defectTypeId,
             @RequestParam(value = "defect_distance", required = false) Double defectDistance,
             @RequestParam("statement_id") UUID statementId,
-            @RequestParam("address") String address,
+            @RequestParam(value = "address", required = false) String address,
             @RequestParam("defect_status") String defectStatus,
             @AuthenticationPrincipal UserEntity userEntity
     ) {
