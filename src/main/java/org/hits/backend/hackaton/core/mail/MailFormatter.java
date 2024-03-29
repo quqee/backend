@@ -514,8 +514,11 @@ public class MailFormatter {
                             <p>Дорожные дефекты</p>
                           </div>
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                            <div class="borderCenter" style="text-align: center" >
-                              <p style="color: #222222;"><strong>До начала работ</strong></p>
+                            <div class="borderCenter" style="text-align: center;text-align: center;
+                                                          border-top: 1px solid black;
+                                                          border-bottom: 1px solid black;
+                                                          padding: 20px 0;" >
+                                                          <p style="color: #222222;"><strong>До начала работ</strong></p>
                 """);
 
         for (DefectFullDto defect : defects) {
