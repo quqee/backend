@@ -7,11 +7,15 @@ import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.RequiredArgsConstructor;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -19,35 +23,19 @@ import java.util.Properties;
 @Service
 @RequiredArgsConstructor
 public class MailService {
-    private final EmailProperties emailProperties;
+    private final JavaMailSender emailSender;
 
+    @Async
     public void sendMessage(String text, String to, String subject) {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", emailProperties.smtp().auth());
-        props.put("mail.smtp.starttls.enable", emailProperties.smtp().starttls().enable());
-        props.put("mail.smtp.host", emailProperties.smtp().host());
-        props.put("mail.smtp.port", emailProperties.smtp().port());
-        props.put("mail.debug", true);
-
-        Session session = Session.getInstance(props,
-                new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(emailProperties.username(), emailProperties.password());
-                    }
-                });
-
         try {
-            Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(emailProperties.from()));
-            msg.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to, false));
-            msg.setSubject(subject);
-            msg.setContent(text, "text/html");
-
-            Transport.send(msg);
-        } catch (MessagingException e) {
-            throw new ExceptionInApplication("Can't send message", ExceptionType.INVALID);
+            MimeMessage mimeMessage = emailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+            messageHelper.setTo(to);
+            messageHelper.setSubject(subject);
+            messageHelper.setText(text, true);
+            emailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new ExceptionInApplication("Error while sending email", ExceptionType.INVALID);
         }
     }
 }

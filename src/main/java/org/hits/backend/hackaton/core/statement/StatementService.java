@@ -50,7 +50,7 @@ public class StatementService {
                 dto.surfaceType(),
                 dto.direction(),
                 dto.deadline(),
-                null,
+                "Ремонт дороги",
                 StatementStatus.OPEN
         );
         var statementId = statementRepository.createStatement(newStatement);

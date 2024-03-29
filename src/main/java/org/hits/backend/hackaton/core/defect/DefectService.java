@@ -28,13 +28,6 @@ public class DefectService {
     private final DefectPhotoRepository defectPhotoRepository;
 
     public UUID createDefect(CreateDefectDto dto) {
-        var statement = defectRepository.getDefectById(dto.statementId())
-                .orElseThrow(() -> new ExceptionInApplication("Statement not found", ExceptionType.NOT_FOUND));
-
-        if (!statement.status().status.equals(StatementStatus.OPEN.status)) {
-            throw new ExceptionInApplication("Statement is not open", ExceptionType.INVALID);
-        }
-
         var defect = new DefectEntity(
                 null,
                 dto.statementId(),

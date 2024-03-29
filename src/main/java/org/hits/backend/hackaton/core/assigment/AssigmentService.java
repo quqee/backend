@@ -11,7 +11,6 @@ import org.hits.backend.hackaton.public_interface.assigment.CreateAssigmentDto;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionInApplication;
 import org.hits.backend.hackaton.public_interface.exception.ExceptionType;
 import org.hits.backend.hackaton.public_interface.statement.StatementFullDto;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

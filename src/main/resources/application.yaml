@@ -1,6 +1,17 @@
 spring:
     application:
         name: test-task
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: zdraviymalish@gmail.com
+        password: nfjz gwye cyxb yplw
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
 
 amazonProperties:
     endpointUrl: https://storage.yandexcloud.net

@@ -9,7 +9,7 @@ info:
     email: inostaziss@gmail.com
   version: 1.0.0
 servers:
-  - url: https://api.quqee.tech/api/v1 # (если здесь изменить, исправить /ws://localhost:8080 в websocket)
+  - url: https://api.quqee.tech/api/v1
 tags:
   - name: user
     description: Операции с пользователем
@@ -199,6 +199,32 @@ paths:
         '403':
           description: Ошибка при авторизации
 
+  /defects/{defectId}/status:
+    post:
+      tags:
+        - defect
+      summary: Изминить статус у дефекта
+      security:
+        - auth-bearer: []
+      parameters:
+        - name: defectId
+          in: path
+          description: ID дефекта
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDefectStatus'
+      responses:
+        '200':
+          description: Фото успешно добавлено
+        '403':
+          description: Ошибка при авторизации
+
   /statements:
     post:
       tags:
@@ -358,6 +384,29 @@ paths:
         '403':
           description: Ошибка при авторизации
 
+  /assigment:
+    post:
+      tags:
+        - assigment
+      summary: Создать поручение
+      operationId: createAssigment()
+      security:
+        - auth-bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssigamentRequest'
+      responses:
+        '200':
+          description: Поручение успешно создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdditionalStatementResponseDto'
+        '403':
+          description: Ошибка при авторизации
 
   /organizations:
     post:
@@ -590,6 +639,27 @@ paths:
             Чтобы получить обновления о статусе пользователей, вам нужно подписаться на топик по адресу ws://api.quqee.tech:8080/ws/user/public
             Не обращайте внимание на 200 статус код https://kapeli.com/cheat_sheets/WebSocket_Status_Codes.docset/Contents/Resources/Documents/index 
 
+  /performer/emails:
+    get:
+      tags:
+        - performer
+      summary: Почты исполнителей
+      operationId: getPerformerEmails()
+      security:
+        - auth-bearer: []
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '403':
+          description: Ошибка при авторизации
+
+
 components:
   schemas:
     UpdateUserProfileRequest:
@@ -635,6 +705,19 @@ components:
         password:
           type: string
           example: 12345
+
+    CreateAssigamentRequest:
+      type: object
+      properties:
+        emails:
+          type: array
+          nullable: false
+          items:
+            type: string
+        statement_id:
+          type: string
+          format: uuid
+          nullable: false
 
     EmployeeDto:
       type: object
@@ -821,19 +904,6 @@ components:
         direction:
           type: string
           nullable: false
-        deadline:
-          type: string
-          format: date-time
-          example: '2025-07-21T17:32:28Z'
-          nullable: false
-        defects:
-          type: array
-          items:
-            type: string
-            format: uuid
-        file:
-          type: string
-          format: binary
 
     UpdateStatementRequest:
       type: object
@@ -870,6 +940,12 @@ components:
         file:
           type: string
           format: binary
+
+    UpdateDefectStatus:
+      type: object
+      properties:
+        status:
+          type: string
 
     AssignmentEmployee:
       type: object
