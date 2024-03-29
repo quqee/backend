@@ -38,7 +38,6 @@ public class StatementController {
             @RequestParam("road_type") String roadType,
             @RequestParam("surface_type") String surfaceType,
             @RequestParam String direction,
-            @RequestParam OffsetDateTime deadline,
             @AuthenticationPrincipal UserEntity userEntity
     ) {
         var createStatementDto = new CreateStatementDto(
@@ -47,7 +46,6 @@ public class StatementController {
                 RoadType.getTypeByName(roadType),
                 SurfaceType.getTypeByName(surfaceType),
                 direction,
-                deadline,
                 userEntity.organizationId()
         );
 

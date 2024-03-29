@@ -12,6 +12,5 @@ public record CreateStatementDto(
         RoadType roadType,
         SurfaceType surfaceType,
         String direction,
-        OffsetDateTime deadline,
         UUID organizationCreatorId
 ) { }

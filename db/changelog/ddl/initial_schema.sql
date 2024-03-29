@@ -68,7 +68,7 @@ CREATE TABLE statement
                                                                          'CONCRETE', 'REINFORCED_CONCRETE', 'COMBINED',
                                                                          'OTHER') ),
     direction                 VARCHAR(255),
-    deadline                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    deadline                  TIMESTAMP WITH TIME ZONE,
     description               VARCHAR(255),
     FOREIGN KEY (organization_creator_id) REFERENCES organization (organization_id),
     FOREIGN KEY (organization_performer_id) REFERENCES organization (organization_id)

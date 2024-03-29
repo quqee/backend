@@ -49,7 +49,7 @@ public class StatementService {
                 dto.roadType(),
                 dto.surfaceType(),
                 dto.direction(),
-                dto.deadline(),
+                null,
                 "Ремонт дороги",
                 StatementStatus.OPEN
         );
